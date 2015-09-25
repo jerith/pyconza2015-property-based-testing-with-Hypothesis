@@ -47,11 +47,13 @@ $mainColor: $base1;
 $headingFont: 'Quicksand', sans-serif;
 $headingColor: $base2;
 $headingLetterSpacing: -0.08em;
+// $headingLineHeight: 1.2;
 $headingTextShadow: none;
 $backgroundColor: $base03;
 $linkColor: $blue;
 $linkColorHover: lighten( $linkColor, 20% );
 $selectionBackgroundColor: $magenta;
+$headingMargin: -$blockMargin 0 $blockMargin*2 0;
 
 
 // Theme template ------------------------------
@@ -73,5 +75,5 @@ $selectionBackgroundColor: $magenta;
   overflow: auto;
   max-height: 600px;
   word-wrap: normal;
-  width: 105%;
+  margin: $blockMargin -9%;
 }

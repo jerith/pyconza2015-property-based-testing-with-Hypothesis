@@ -8,3 +8,6 @@ class VerifyCorrectness(object):
     @classmethod
     def assert_correct(cls):
         pass
+
+
+number = None

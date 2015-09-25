@@ -1,25 +1,22 @@
-from math import pi
 from unittest import TestCase
 from hypothesis import given, strategies as st
-from mycode import Deflector, recalibrate_deflector
-
-
-def phaseval():
-    return st.floats(min_value=-pi, max_value=pi)
+from deflector import Deflector, recalibrate_deflector
 
 
 class TestDeflectorProperties(TestCase):
+    @given(initial_phase=st.floats(-1e8, 1e8))
+    def test_initial_phase_within_range(self, initial_phase):
+        """Phase is always in the range [-180, 180]."""
+        assert -180 <= Deflector(initial_phase).phase <= 180
 
-    @given(initial_phase=phaseval(), phase_shift=phaseval())
-    def test_recalibration(self, initial_phase, phase_shift):
-        """Recalibration is actually more complicated than this."""
-        deflector = Deflector(initial_phase)
+    @given(initial=st.floats(-1e8, 1e8), phase_shift=st.floats(-1e8, 1e8))
+    def test_recalibration(self, initial, phase_shift):
+        """Recalibration adjusts phase within bounds."""
+        deflector = Deflector(initial)
         recalibrate_deflector(deflector, phase_shift)
-        self.assertEqual(deflector.phase, initial_phase + phase_shift)
+        assert -180 <= deflector.phase <= 180
+        assert approxeq(deflector.phase % 360, (initial + phase_shift) % 360)
 
-    @given(initial_phase=phaseval())
-    def test_phase_inversion(self, initial_phase):
-        """Phase inversion is exactly what it says on the tin."""
-        deflector = Deflector(initial_phase)
-        deflector.trigger_phase_inversion()
-        self.assertEqual(deflector.phase, -initial_phase)
+
+def approxeq(a, b, decimals=5):
+    return round(a, decimals) == round(b, decimals)

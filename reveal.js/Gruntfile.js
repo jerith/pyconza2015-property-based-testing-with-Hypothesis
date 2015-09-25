@@ -135,8 +135,8 @@ module.exports = function(grunt) {
                 tasks: [ 'preprocess' ]
             },
             python: {
-                files: [ '../code/**/*.py' ],
-                tasks: [ 'exec:pytest', 'preprocess' ]
+                files: [ '../code/**/*.py', '!../code/**/.*' ],
+                tasks: [ 'preprocess', 'exec:pytest' ]
             }
 		},
 
@@ -154,7 +154,7 @@ module.exports = function(grunt) {
         },
 
         exec: {
-            pytest: 'py.test ../code'
+            pytest: 'py.test --tb=native --flake8 ../code'
         }
 
 	});

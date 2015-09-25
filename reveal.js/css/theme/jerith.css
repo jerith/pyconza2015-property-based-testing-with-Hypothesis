@@ -37,7 +37,7 @@ body {
  * HEADERS
  *********************************************/
 .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
-  margin: 0 0 20px 0;
+  margin: -20px 0 40px 0;
   color: #eee8d5;
   font-family: 'Quicksand', sans-serif;
   font-weight: normal;
@@ -281,4 +281,4 @@ body {
   overflow: auto;
   max-height: 600px;
   word-wrap: normal;
-  width: 105%; }
+  margin: 20px -9%; }

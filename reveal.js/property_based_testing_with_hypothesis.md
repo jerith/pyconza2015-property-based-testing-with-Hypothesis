@@ -20,39 +20,99 @@ I spend a lot of my time writing tests, and I'm not very good at it.
 $$$
 $$$
 
-### How we usually write tests
+### An example
 
-<br/>
 
 ```python
-import unittest
-from mycode import Deflector, recalibrate_deflector
+class Deflector(object):
+    """Important starship component. Powered by narrativium."""
 
-class TestMyCode(unittest.TestCase):
-    def test_recalibrate_deflector_positive(self):
-        deflector = Deflector(1.0)
-        recalibrate_deflector(deflector, phase_shift=1.25)
-        self.assertEqual(deflector.phase, 2.25)
+    def __init__(self, phase):
+        self.phase = _norm_angle(phase)
 
-    def test_recalibrate_deflector_negative(self):
-        deflector = Deflector(1.0)
-        recalibrate_deflector(deflector, phase_shift=-0.75)
-        self.assertEqual(deflector.phase, 0.25)
+    def _shift_phase(self, delta):
+        """Mumble mumble technobabble."""
+        self.phase = _norm_angle(self.phase + delta)
 
-    def test_recalibrate_deflector_very_negative(self):
-        deflector = Deflector(1.0)
-        recalibrate_deflector(deflector, phase_shift=-1.75)
-        self.assertEqual(deflector.phase, -0.75)
+    # Complete implementation is left as an exercise for the audience.
+
+
+def recalibrate_deflector(deflector, phase_shift):
+    """Manually recalibrate a deflector."""
+    deflector._shift_phase(phase_shift)
+
+
+def _norm_angle(phase):
+    """Angles are periodic in the range [-180, 180] degrees."""
+    return (phase + 180) % 360 - 180
 
 ```
 
 $$$NOTES
 
+Some simple code we want to test.
+
+Note that the phase angle is normalised.
+
+$$$
+
+### How we usually write tests
+
+
+```python
+from unittest import TestCase
+from deflector import Deflector, recalibrate_deflector
+
+
+class TestDeflector(TestCase):
+    def test_initial_phase_within_range(self):
+        """Phase is always in the range [-180, 180]."""
+        assert Deflector(361.0).phase == 1.0
+        assert Deflector(-361.0).phase == -1.0
+        assert Deflector(179.0).phase == 179.0
+        assert Deflector(181.0).phase == -179.0
+
+    def test_recalibrate_deflector_in_bounds(self):
+        """Recalibration adjusts phase within bounds."""
+        deflector = Deflector(1.0)
+        recalibrate_deflector(deflector, phase_shift=1.25)
+        assert deflector.phase == 2.25
+
+    def test_recalibrate_deflector_out_of_bounds(self):
+        """Recalibrated phase is adjused to be within bounds."""
+        deflector = Deflector(95.0)
+        recalibrate_deflector(deflector, phase_shift=100.0)
+        assert deflector.phase == -165.0
+
+```
+
+$$$NOTES
+
+This is "example-based testing".
+
 A typical unit test suite has lots of little tests that each test one thing.
 
-This is good, but tedious to write. People are bad at tedious things.
+Ideally, each code path is tested exactly once.
 
-Focus on low-level things.
+$$$
+
+### Issues with example-based tests
+
+* Tedious to write. <!--{_class="fragment"}-->
+
+* Lots of repetitition. <!--{_class="fragment"}-->
+
+* Painful to maintain. <!--{_class="fragment"}-->
+
+* Focus on low-level details. <!--{_class="fragment"}-->
+
+* ... But infinitely better than no tests at all. <!--{_class="fragment"}-->
+
+$$$NOTES
+
+People are bad at tedious things.
+
+Focuses on low-level things.
 
 $$$
 
@@ -66,7 +126,7 @@ In a world made of unicorns and kittens and rainbows...
 
 ```python
 import magictest
-from mycode import Deflector, recalibrate_deflector
+from deflector import Deflector, recalibrate_deflector
 
 magictest.assert_correct(Deflector)
 magictest.assert_correct(recalibrate_deflector)
@@ -76,9 +136,7 @@ magictest.assert_correct(recalibrate_deflector)
 
 <br/>
 
-<span class="fragment">
-...but how does `magictest` determine *correctness*?
-</span>
+<p class="fragment">...but how does `magictest` determine correctness?</p>
 
 $$$NOTES
 
@@ -89,25 +147,22 @@ $$$
 
 ### Maybe without the unicorns
 
-<br/>
-
 ```python
-from sufficientlyadvancedtest import VerifyCorrectness
-from mycode import Deflector, recalibrate_deflector
+from sufficientlyadvancedtest import VerifyCorrectness, number
+from deflector import Deflector, recalibrate_deflector
 
 
 class VerifyDeflectorCorrectness(VerifyCorrectness):
-    def verify_recalibration(self, initial_phase, phase_shift):
-        """Recalibration is actually more complicated than this."""
+    def verify_initial_phase_within_range(self, initial_phase=number):
+        """Phase is always in the range [-180, 180]."""
+        assert -180 <= Deflector(initial_phase).phase <= 180
+
+    def verify_recalibration(self, initial_phase=number, phase_shift=number):
+        """Recalibration adjusts phase within bounds."""
         deflector = Deflector(initial_phase)
         recalibrate_deflector(deflector, phase_shift)
-        self.assertEqual(deflector.phase, initial_phase + phase_shift)
-
-    def verify_phase_inversion(self, initial_phase):
-        """Phase inversion is exactly what it says on the tin."""
-        deflector = Deflector(initial_phase)
-        deflector.trigger_phase_inversion()
-        self.assertEqual(deflector.phase, -initial_phase)
+        assert -180 <= deflector.phase <= 180
+        assert deflector.phase % 360 == (initial_phase + phase_shift) % 360
 
 VerifyDeflectorCorrectness.assert_correct()
 
@@ -117,42 +172,9 @@ $$$NOTES
 
 We have some methods that test correctness *in general*.
 
-But we still need Sufficiently Advanced Technology to use them.
-
-
-$$$
-
-### A little less magic, perhaps
-
-```python
-from somewhatadvancedtest import VerifyCorrectness, inputs, number
-from mycode import Deflector, recalibrate_deflector
-
-
-class VerifyDeflectorCorrectness(VerifyCorrectness):
-    @inputs(initial_phase=number, phase_shift=number)
-    def verify_recalibration(self, initial_phase, phase_shift):
-        """Recalibration is actually more complicated than this."""
-        deflector = Deflector(initial_phase)
-        recalibrate_deflector(deflector, phase_shift)
-        self.assertEqual(deflector.phase, initial_phase + phase_shift)
-
-    @inputs(initial_phase=number)
-    def verify_phase_inversion(self, initial_phase):
-        """Phase inversion is exactly what it says on the tin."""
-        deflector = Deflector(initial_phase)
-        deflector.trigger_phase_inversion()
-        self.assertEqual(deflector.phase, -initial_phase)
-
-VerifyDeflectorCorrectness.assert_correct()
-
-```
-
-$$$NOTES
-
-This is now something we can realistically implement.
-
 We're only specifying the kind of input, not specific values.
+
+But how does this Sufficiently Advanced Technology work?
 
 
 $$$
@@ -161,25 +183,27 @@ $$$
 
 ```python
 from unittest import TestCase
-from hypothesis import given
-from mycode import Deflector, recalibrate_deflector
-from mystrategies import finitefloats
+from hypothesis import given, strategies as st
+from deflector import Deflector, recalibrate_deflector
 
 
 class TestDeflectorProperties(TestCase):
-    @given(initial_phase=finitefloats(), phase_shift=finitefloats())
-    def test_recalibration(self, initial_phase, phase_shift):
-        """Recalibration is actually more complicated than this."""
-        deflector = Deflector(initial_phase)
-        recalibrate_deflector(deflector, phase_shift)
-        self.assertEqual(deflector.phase, initial_phase + phase_shift)
+    @given(initial_phase=st.floats(-1e8, 1e8))
+    def test_initial_phase_within_range(self, initial_phase):
+        """Phase is always in the range [-180, 180]."""
+        assert -180 <= Deflector(initial_phase).phase <= 180
 
-    @given(initial_phase=finitefloats())
-    def test_phase_inversion(self, initial_phase):
-        """Phase inversion is exactly what it says on the tin."""
-        deflector = Deflector(initial_phase)
-        deflector.trigger_phase_inversion()
-        self.assertEqual(deflector.phase, -initial_phase)
+    @given(initial=st.floats(-1e8, 1e8), phase_shift=st.floats(-1e8, 1e8))
+    def test_recalibration(self, initial, phase_shift):
+        """Recalibration adjusts phase within bounds."""
+        deflector = Deflector(initial)
+        recalibrate_deflector(deflector, phase_shift)
+        assert -180 <= deflector.phase <= 180
+        assert approxeq(deflector.phase % 360, (initial + phase_shift) % 360)
+
+
+def approxeq(a, b, decimals=5):
+    return round(a, decimals) == round(b, decimals)
 
 ```
 
