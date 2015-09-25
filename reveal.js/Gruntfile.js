@@ -131,8 +131,12 @@ module.exports = function(grunt) {
 				files: [ 'index.html', '*.md' ]
 			},
             markdown: {
-                files: [ '../*.md', '../code/**/*.py' ],
-                tasks: 'preprocess'
+                files: [ '../*.md' ],
+                tasks: [ 'preprocess' ]
+            },
+            python: {
+                files: [ '../code/**/*.py' ],
+                tasks: [ 'exec:pytest', 'preprocess' ]
             }
 		},
 
@@ -147,6 +151,10 @@ module.exports = function(grunt) {
                 flatten: true,
                 expand: true
             }
+        },
+
+        exec: {
+            pytest: 'py.test ../code'
         }
 
 	});
@@ -162,9 +170,10 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks( 'grunt-autoprefixer' );
 	grunt.loadNpmTasks( 'grunt-zip' );
     grunt.loadNpmTasks('grunt-preprocess');
+    grunt.loadNpmTasks('grunt-exec');
 
 	// Default task
-	grunt.registerTask( 'default', [ 'css', 'js' ] );
+	grunt.registerTask( 'default', [ 'css', 'js', 'exec:pytest', 'preprocess' ] );
 
 	// JS task
 	grunt.registerTask( 'js', [ 'jshint', 'uglify', 'qunit' ] );
@@ -182,7 +191,7 @@ module.exports = function(grunt) {
 	grunt.registerTask( 'package', [ 'default', 'zip' ] );
 
 	// Serve presentation locally
-	grunt.registerTask( 'serve', [ 'connect', 'watch' ] );
+	grunt.registerTask( 'serve', [ 'preprocess', 'connect', 'watch' ] );
 
 	// Run tests
 	grunt.registerTask( 'test', [ 'jshint', 'qunit' ] );
