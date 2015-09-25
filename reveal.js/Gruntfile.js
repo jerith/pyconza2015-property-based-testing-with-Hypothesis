@@ -147,7 +147,7 @@ module.exports = function(grunt) {
                 }
             },
             markdown: {
-                src: '../*.md',
+                src: [ '../*.md', '!../*.part.md' ],
                 flatten: true,
                 expand: true
             }

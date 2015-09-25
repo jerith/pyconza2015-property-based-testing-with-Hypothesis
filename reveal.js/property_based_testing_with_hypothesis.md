@@ -20,8 +20,22 @@ I spend a lot of my time writing tests, and I'm not very good at it.
 $$$
 $$$
 
-### An example
+## Part 1
 
+<br/>
+<br/>
+<br/>
+<br/>
+
+### What is property-based testing?
+
+$$$NOTES
+
+Demonstrate by example.
+
+$$$
+
+### An example
 
 ```python
 class Deflector(object):
@@ -54,10 +68,11 @@ Some simple code we want to test.
 
 Note that the phase angle is normalised.
 
+Degrees instead of radians to avoid some spiders.
+
 $$$
 
 ### How we usually write tests
-
 
 ```python
 from unittest import TestCase
@@ -112,7 +127,7 @@ $$$NOTES
 
 People are bad at tedious things.
 
-Focuses on low-level things.
+Can't see the forest for the trees.
 
 $$$
 
@@ -136,12 +151,11 @@ magictest.assert_correct(recalibrate_deflector)
 
 <br/>
 
-<p class="fragment">...but how does `magictest` determine correctness?</p>
+<p class="fragment">...but how does `magictest` know what "correct" is?</p>
 
 $$$NOTES
 
 This is the core of testing: Determining correctness.
-
 
 $$$
 
@@ -176,6 +190,25 @@ We're only specifying the kind of input, not specific values.
 
 But how does this Sufficiently Advanced Technology work?
 
+$$$
+
+### How property-based tests work
+
+* Properties are assertions about invariants. <!--{_class="fragment"}-->
+
+* Lots of checks with randomly generated input. <!--{_class="fragment"}-->
+
+* Failure case minimisation. <!--{_class="fragment"}-->
+
+* Focus on high-level behaviour. <!--{_class="fragment"}-->
+
+* ... But no silver bullet. <!--{_class="fragment"}-->
+
+$$$NOTES
+
+You like non-deterministic tests, right?
+
+Lots of checks means lots of time.
 
 $$$
 
@@ -211,7 +244,8 @@ $$$NOTES
 
 This is a real test case that actually runs.
 
-It doesn't pass, though, because float spiders.
+Floating point approximation spiders.
+
 
 $$$
 $$$
