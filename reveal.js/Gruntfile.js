@@ -95,7 +95,7 @@ module.exports = function(grunt) {
 					port: port,
 					base: base,
 					livereload: true,
-					open: true
+					open: false //true
 				}
 			}
 		},
@@ -124,13 +124,30 @@ module.exports = function(grunt) {
 				tasks: 'css-themes'
 			},
 			css: {
-				files: [ 'css/reveal.scss' ],
+				files: [ 'css/reveal.scss', 'css/highlight_tomorrow.css' ],
 				tasks: 'css-core'
 			},
 			html: {
-				files: [ 'index.html']
-			}
-		}
+				files: [ 'index.html', '*.md' ]
+			},
+            markdown: {
+                files: [ '../*.md', '../code/**/*.py' ],
+                tasks: 'preprocess'
+            }
+		},
+
+        preprocess: {
+            options: {
+                context: {
+                    DEBUG: true
+                }
+            },
+            markdown: {
+                src: '../*.md',
+                flatten: true,
+                expand: true
+            }
+        }
 
 	});
 
@@ -144,6 +161,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks( 'grunt-contrib-connect' );
 	grunt.loadNpmTasks( 'grunt-autoprefixer' );
 	grunt.loadNpmTasks( 'grunt-zip' );
+    grunt.loadNpmTasks('grunt-preprocess');
 
 	// Default task
 	grunt.registerTask( 'default', [ 'css', 'js' ] );
