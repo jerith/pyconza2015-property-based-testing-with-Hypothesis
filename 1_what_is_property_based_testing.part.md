@@ -16,23 +16,23 @@ $$$
 ### An example
 
 ```python
-<!-- @include code/part1/deflector.py -->
+<!-- @include code/part1/naive_pqueue.py -->
 ```
 
 $$$NOTES
 
 Some simple code we want to test.
 
-Note that the phase angle is normalised.
+Naive implementation is easy to understand.
 
-Degrees instead of radians to avoid some spiders.
+O(N) because Timsort.
 
 $$$
 
 ### How we usually write tests
 
 ```python
-<!-- @include code/part1/tests/test_deflector_tedious.py -->
+<!-- @include code/part1/tests/test_pqueue_example.py -->
 ```
 
 $$$NOTES
@@ -74,7 +74,7 @@ In a world made of unicorns and kittens and rainbows...
 <br/>
 
 ```python
-<!-- @include code/part1/tests/test_deflector_magic.py -->
+<!-- @include code/part1/tests/test_pqueue_magic.py -->
 ```
 <!-- {_class="fragment"} -->
 
@@ -91,7 +91,7 @@ $$$
 ### Maybe without the unicorns
 
 ```python
-<!-- @include code/part1/tests/test_deflector_sufficiently_advanced.py -->
+<!-- @include code/part1/tests/test_pqueue_sufficiently_advanced.py -->
 ```
 
 $$$NOTES
@@ -129,11 +129,11 @@ $$$
 ### For real, with Hypothesis
 
 ```python
-<!-- @include code/part1/tests/test_deflector_properties.py -->
+<!-- @include code/part1/tests/test_pqueue_properties.py -->
 ```
 
 $$$NOTES
 
 This is a real test case that actually runs.
 
-Floating point approximation spiders.
+Not complete, though. Doesn't test `add()`.

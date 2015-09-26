@@ -38,27 +38,26 @@ $$$
 ### An example
 
 ```python
-class Deflector(object):
-    """Important starship component. Powered by narrativium."""
+class NaivePriorityQueue(object):
+    """
+    A priority queue is a collection which returns items in sorted order.
+    This is a naive implementation with O(N) `put()` and O(1) `get()`.
+    """
+    def __init__(self, items=()):
+        self._items = list(items)
+        self._items.sort()
 
-    def __init__(self, phase):
-        self.phase = _norm_angle(phase)
+    def __len__(self):
+        return len(self._items)
 
-    def _shift_phase(self, delta):
-        """Mumble mumble technobabble."""
-        self.phase = _norm_angle(self.phase + delta)
+    def put(self, item):
+        """Add an item to the collection."""
+        self._items.append(item)
+        self._items.sort()
 
-    # Complete implementation is left as an exercise for the audience.
-
-
-def recalibrate_deflector(deflector, phase_shift):
-    """Manually recalibrate a deflector."""
-    deflector._shift_phase(phase_shift)
-
-
-def _norm_angle(phase):
-    """Angles are periodic in the range [-180, 180] degrees."""
-    return (phase + 180) % 360 - 180
+    def get(self):
+        """Remove and return the smallest item in the collection."""
+        return self._items.pop(0)
 
 ```
 
@@ -66,38 +65,47 @@ $$$NOTES
 
 Some simple code we want to test.
 
-Note that the phase angle is normalised.
+Naive implementation is easy to understand.
 
-Degrees instead of radians to avoid some spiders.
+O(N) because Timsort.
 
 $$$
 
 ### How we usually write tests
 
 ```python
-from unittest import TestCase
-from deflector import Deflector, recalibrate_deflector
+from naive_pqueue import NaivePriorityQueue
 
+def test_get_only():
+    """If there's only one item, we get that."""
+    pq = NaivePriorityQueue(["a"])
+    assert pq.get() == "a"
+    assert len(pq) == 0
 
-class TestDeflector(TestCase):
-    def test_initial_phase_within_range(self):
-        """Phase is always in the range [-180, 180]."""
-        assert Deflector(361.0).phase == 1.0
-        assert Deflector(-361.0).phase == -1.0
-        assert Deflector(179.0).phase == 179.0
-        assert Deflector(181.0).phase == -179.0
+def test_get_both():
+    """If there are two items, we get both in order."""
+    pq = NaivePriorityQueue(["a", "b"])
+    assert pq.get() == "a"
+    assert pq.get() == "b"
+    assert len(pq) == 0
 
-    def test_recalibrate_deflector_in_bounds(self):
-        """Recalibration adjusts phase within bounds."""
-        deflector = Deflector(1.0)
-        recalibrate_deflector(deflector, phase_shift=1.25)
-        assert deflector.phase == 2.25
+def test_put_only():
+    """If the queue is empty, putting is trivial."""
+    pq = NaivePriorityQueue()
+    pq.put("a")
+    assert pq._items == ["a"]
 
-    def test_recalibrate_deflector_out_of_bounds(self):
-        """Recalibrated phase is adjused to be within bounds."""
-        deflector = Deflector(95.0)
-        recalibrate_deflector(deflector, phase_shift=100.0)
-        assert deflector.phase == -165.0
+def test_put_small():
+    """If we put a small item, it lands at the front."""
+    pq = NaivePriorityQueue(["b", "c"])
+    pq.put("a")
+    assert pq._items == ["a", "b", "c"]
+
+def test_put_big():
+    """If we put a big item, it lands at the back."""
+    pq = NaivePriorityQueue(["a", "b"])
+    pq.put("c")
+    assert pq._items == ["a", "b", "c"]
 
 ```
 
@@ -141,10 +149,9 @@ In a world made of unicorns and kittens and rainbows...
 
 ```python
 from magic import assert_correct
-from deflector import Deflector, recalibrate_deflector
+from naive_pqueue import NaivePriorityQueue
 
-assert_correct(Deflector)
-assert_correct(recalibrate_deflector)
+assert_correct(NaivePriorityQueue)
 
 ```
 <!-- {_class="fragment"} -->
@@ -162,23 +169,26 @@ $$$
 ### Maybe without the unicorns
 
 ```python
-from sufficientlyadvancedtechnology import VerifyCorrectness, number
-from deflector import Deflector, recalibrate_deflector
+from sufficiently_advanced_technology import VerifyCorrect, number_list
+from naive_pqueue import NaivePriorityQueue
 
+class VerifyPriorityQueueCorrect(VerifyCorrect):
+    def get_all_items(self, items=number_list):
+        """We get every item exactly once."""
+        pq = NaivePriorityQueue(items)
+        while len(pq) > 0:
+            items.remove(pq.get())
+        assert len(items) == 0
 
-class VerifyDeflectorCorrectness(VerifyCorrectness):
-    def verify_initial_phase_within_range(self, initial_phase=number):
-        """Phase is always in the range [-180, 180]."""
-        assert -180 <= Deflector(initial_phase).phase <= 180
+    def get_items_in_order(self, items=number_list):
+        """We get items in sorted order."""
+        pq = NaivePriorityQueue(items)
+        prior = current = pq.get()
+        while len(pq) > 0:
+            prior, current = current, pq.get()
+            assert prior <= current
 
-    def verify_recalibration(self, initial_phase=number, phase_shift=number):
-        """Recalibration adjusts phase within bounds."""
-        deflector = Deflector(initial_phase)
-        recalibrate_deflector(deflector, phase_shift)
-        assert -180 <= deflector.phase <= 180
-        assert deflector.phase % 360 == (initial_phase + phase_shift) % 360
-
-VerifyDeflectorCorrectness.assert_correct()
+VerifyPriorityQueueCorrect.assert_correct()
 
 ```
 
@@ -217,28 +227,25 @@ $$$
 ### For real, with Hypothesis
 
 ```python
-from unittest import TestCase
 from hypothesis import given, strategies as st
-from deflector import Deflector, recalibrate_deflector
+from naive_pqueue import NaivePriorityQueue
 
+@given(items=st.lists(st.integers()))
+def test_get_all_items(items):
+    """We get every item exactly once."""
+    pq = NaivePriorityQueue(items)
+    while len(pq) > 0:
+        items.remove(pq.get())
+    assert len(items) == 0
 
-class TestDeflectorProperties(TestCase):
-    @given(initial_phase=st.floats(-1e8, 1e8))
-    def test_initial_phase_within_range(self, initial_phase):
-        """Phase is always in the range [-180, 180]."""
-        assert -180 <= Deflector(initial_phase).phase <= 180
-
-    @given(initial=st.floats(-1e8, 1e8), phase_shift=st.floats(-1e8, 1e8))
-    def test_recalibration(self, initial, phase_shift):
-        """Recalibration adjusts phase within bounds."""
-        deflector = Deflector(initial)
-        recalibrate_deflector(deflector, phase_shift)
-        assert -180 <= deflector.phase <= 180
-        assert approxeq(deflector.phase % 360, (initial + phase_shift) % 360)
-
-
-def approxeq(a, b, decimals=5):
-    return round(a, decimals) == round(b, decimals)
+@given(items=st.lists(st.integers(), min_size=1))
+def test_get_items_in_order(items):
+    """We get items in sorted order."""
+    pq = NaivePriorityQueue(items)
+    prior = current = pq.get()
+    while len(pq) > 0:
+        prior, current = current, pq.get()
+        assert prior <= current
 
 ```
 
@@ -246,7 +253,7 @@ $$$NOTES
 
 This is a real test case that actually runs.
 
-Floating point approximation spiders.
+Not complete, though. Doesn't test `add()`.
 
 
 $$$
