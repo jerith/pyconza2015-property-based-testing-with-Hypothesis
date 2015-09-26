@@ -131,11 +131,11 @@ module.exports = function(grunt) {
 				files: [ 'index.html', '*.md' ]
 			},
             markdown: {
-                files: [ '../*.md' ],
+                files: [ '../*.md', '../demos/*.txt' ],
                 tasks: [ 'preprocess' ]
             },
             python: {
-                files: [ '../code/**/*.py', '!../code/**/.*' ],
+                files: [ '../code/**/*.py' ],
                 tasks: [ 'preprocess', 'exec:pytest' ]
             }
 		},

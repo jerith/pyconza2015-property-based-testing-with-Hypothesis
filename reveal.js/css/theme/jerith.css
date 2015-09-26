@@ -271,14 +271,17 @@ body {
   color: #268bd2; }
 
 .reveal pre {
-  font-size: 0.6em; }
+  display: flex;
+  font-size: 0.6em;
+  box-shadow: unset;
+  width: 110%;
+  margin: 20px -5%; }
 
 .reveal ul {
   line-height: 2em; }
 
 .reveal pre code {
   padding: 10px;
-  overflow: auto;
   max-height: 600px;
-  word-wrap: normal;
-  margin: 20px -9%; }
+  margin: 0 auto;
+  box-shadow: 0px 0px 6px rgba(255, 255, 255, 0.2); }

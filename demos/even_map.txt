@@ -1,0 +1,7 @@
+>>> even_integers = strategies.integers().map(lambda x: x * 2)
+>>> even_integers.example()
+6
+>>> even_integers.example()
+-52
+>>> even_integers.example()
+-621603898346041721844744845583782563802L

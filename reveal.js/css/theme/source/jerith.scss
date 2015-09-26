@@ -47,7 +47,6 @@ $mainColor: $base1;
 $headingFont: 'Quicksand', sans-serif;
 $headingColor: $base2;
 $headingLetterSpacing: -0.08em;
-// $headingLineHeight: 1.2;
 $headingTextShadow: none;
 $backgroundColor: $base03;
 $linkColor: $blue;
@@ -63,7 +62,11 @@ $headingMargin: -$blockMargin 0 $blockMargin*2 0;
 // Override some things after the theme has been applied.
 
 .reveal pre {
+  display: flex;
   font-size: 0.60em;
+  box-shadow: unset;
+  width: 110%;
+  margin: $blockMargin -5%;
 }
 
 .reveal ul {
@@ -72,8 +75,7 @@ $headingMargin: -$blockMargin 0 $blockMargin*2 0;
 
 .reveal pre code {
   padding: 10px;
-  overflow: auto;
   max-height: 600px;
-  word-wrap: normal;
-  margin: $blockMargin -9%;
+  margin: 0 auto;
+  box-shadow: 0px 0px 6px rgba(255,255,255,0.2);
 }

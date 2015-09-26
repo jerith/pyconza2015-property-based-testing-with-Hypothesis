@@ -25,6 +25,11 @@ $$$
 $$$
 $$$
 
+<!-- @include 2_hypothesis.part.md -->
+
+$$$
+$$$
+
 ## The end of the slides
 
 <br/><br/>

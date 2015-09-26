@@ -1,0 +1,21 @@
+>>> from hypothesis import strategies
+
+>>> text = strategies.text()
+>>> text.example()
+u''
+>>> text.example()
+u'm<\x7f&\x02\u0393\r`\x8d<&\x1c\u0393mm\r\x1c\x18\x0c\x02\xa5'
+
+>>> abctext = strategies.text(alphabet="abc")
+>>> abctext.example()
+u'cacaccccacaaacc'
+>>> abctext.example()
+u'aaaaaaaabaacabaaacaaaaaabaaaaac'
+
+>>> lists_of_ints = strategies.lists(strategies.integers(-1000, 1000))
+>>> lists_of_ints.example()
+[-947, 873, -947, -37, 936, 936, 936]
+>>> lists_of_ints.example()
+[-805, 855, 674, -236, 447, 775, -168, -909, -512, 220, 994, 278, -803, -901]
+>>> lists_of_ints.example()
+[-75, 487, -468]

@@ -16,7 +16,7 @@ $$$
 ### An example
 
 ```python
-<!-- @include code/deflector.py -->
+<!-- @include code/part1/deflector.py -->
 ```
 
 $$$NOTES
@@ -32,7 +32,7 @@ $$$
 ### How we usually write tests
 
 ```python
-<!-- @include code/tests/test_deflector_tedious.py -->
+<!-- @include code/part1/tests/test_deflector_tedious.py -->
 ```
 
 $$$NOTES
@@ -74,13 +74,13 @@ In a world made of unicorns and kittens and rainbows...
 <br/>
 
 ```python
-<!-- @include code/tests/test_deflector_magic.py -->
+<!-- @include code/part1/tests/test_deflector_magic.py -->
 ```
 <!-- {_class="fragment"} -->
 
 <br/>
 
-<p class="fragment">...but how does `magictest` know what "correct" is?</p>
+<p class="fragment">...but how does `assert_correct` know what's correct?</p>
 
 $$$NOTES
 
@@ -91,12 +91,14 @@ $$$
 ### Maybe without the unicorns
 
 ```python
-<!-- @include code/tests/test_deflector_sufficiently_advanced.py -->
+<!-- @include code/part1/tests/test_deflector_sufficiently_advanced.py -->
 ```
 
 $$$NOTES
 
 We have some methods that test correctness *in general*.
+
+Although these reimplement too much of the code under test.
 
 We're only specifying the kind of input, not specific values.
 
@@ -127,7 +129,7 @@ $$$
 ### For real, with Hypothesis
 
 ```python
-<!-- @include code/tests/test_deflector_properties.py -->
+<!-- @include code/part1/tests/test_deflector_properties.py -->
 ```
 
 $$$NOTES

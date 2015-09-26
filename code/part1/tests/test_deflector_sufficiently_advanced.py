@@ -1,4 +1,4 @@
-from sufficientlyadvancedtest import VerifyCorrectness, number
+from sufficientlyadvancedtechnology import VerifyCorrectness, number
 from deflector import Deflector, recalibrate_deflector
 
 

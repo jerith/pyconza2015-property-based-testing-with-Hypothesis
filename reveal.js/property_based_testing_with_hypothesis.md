@@ -140,18 +140,18 @@ In a world made of unicorns and kittens and rainbows...
 <br/>
 
 ```python
-import magictest
+from magic import assert_correct
 from deflector import Deflector, recalibrate_deflector
 
-magictest.assert_correct(Deflector)
-magictest.assert_correct(recalibrate_deflector)
+assert_correct(Deflector)
+assert_correct(recalibrate_deflector)
 
 ```
 <!-- {_class="fragment"} -->
 
 <br/>
 
-<p class="fragment">...but how does `magictest` know what "correct" is?</p>
+<p class="fragment">...but how does `assert_correct` know what's correct?</p>
 
 $$$NOTES
 
@@ -162,7 +162,7 @@ $$$
 ### Maybe without the unicorns
 
 ```python
-from sufficientlyadvancedtest import VerifyCorrectness, number
+from sufficientlyadvancedtechnology import VerifyCorrectness, number
 from deflector import Deflector, recalibrate_deflector
 
 
@@ -185,6 +185,8 @@ VerifyDeflectorCorrectness.assert_correct()
 $$$NOTES
 
 We have some methods that test correctness *in general*.
+
+Although these reimplement too much of the code under test.
 
 We're only specifying the kind of input, not specific values.
 
@@ -245,6 +247,144 @@ $$$NOTES
 This is a real test case that actually runs.
 
 Floating point approximation spiders.
+
+
+$$$
+$$$
+
+## Part 2
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+### Hypothesis
+
+$$$NOTES
+
+$$$
+
+### Writing tests
+
+```python
+from hypothesis import given, strategies as st
+
+
+@given(st.integers())
+def test_addition_identity(x):
+    assert x + 0 == x
+
+
+@given(st.integers(), st.integers())
+def test_addition_commutative(x, y):
+    assert x + y == y + x
+
+
+@given(st.integers(), st.integers(), st.integers())
+def test_addition_associative(x, y, z):
+    assert (x + y) + z == x + (y + z)
+
+```
+
+$$$NOTES
+
+Other tools call them generators.
+
+.example() generates a random example.
+
+Useful for more than just tests.
+
+$$$
+
+### Built-in Strategies
+
+```python
+>>> from hypothesis import strategies
+
+>>> text = strategies.text()
+>>> text.example()
+u''
+>>> text.example()
+u'm<\x7f&\x02\u0393\r`\x8d<&\x1c\u0393mm\r\x1c\x18\x0c\x02\xa5'
+
+>>> abctext = strategies.text(alphabet="abc")
+>>> abctext.example()
+u'cacaccccacaaacc'
+>>> abctext.example()
+u'aaaaaaaabaacabaaacaaaaaabaaaaac'
+
+>>> lists_of_ints = strategies.lists(strategies.integers(-1000, 1000))
+>>> lists_of_ints.example()
+[-947, 873, -947, -37, 936, 936, 936]
+>>> lists_of_ints.example()
+[-805, 855, 674, -236, 447, 775, -168, -909, -512, 220, 994, 278, -803, -901]
+>>> lists_of_ints.example()
+[-75, 487, -468]
+
+```
+
+$$$NOTES
+
+Other tools call them generators.
+
+.example() generates a random example.
+
+Useful for more than just tests.
+
+$$$
+
+### Adapting strategies: filter
+
+```python
+>>> even_lists = lists(integers(0, 100)).filter(lambda l: len(l) % 2 == 0)
+>>> even_lists.example()
+[52, 42]
+>>> even_lists.example()
+[71, 34, 79, 50, 80, 56, 64, 34]
+>>> even_lists.example()
+[]
+
+```
+
+$$$NOTES
+
+$$$
+
+### Adapting strategies: map
+
+```python
+>>> even_integers = strategies.integers().filter(lambda x: x % 2 == 0)
+>>> even_integers.example()
+-54
+>>> even_integers.example()
+0
+>>> even_integers.example()
+-110212872381391885439645758881510120016L
+
+
+```
+
+```python
+>>> even_integers = strategies.integers().map(lambda x: x * 2)
+>>> even_integers.example()
+6
+>>> even_integers.example()
+-52
+>>> even_integers.example()
+-621603898346041721844744845583782563802L
+
+```
+
+$$$NOTES
+
+Other tools call them generators.
+
+.example() generates a random example.
+
+Useful for more than just tests.
+
+$$$
 
 
 $$$

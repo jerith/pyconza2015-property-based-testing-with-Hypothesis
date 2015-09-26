@@ -1,0 +1,7 @@
+>>> even_lists = lists(integers(0, 100)).filter(lambda l: len(l) % 2 == 0)
+>>> even_lists.example()
+[52, 42]
+>>> even_lists.example()
+[71, 34, 79, 50, 80, 56, 64, 34]
+>>> even_lists.example()
+[]
