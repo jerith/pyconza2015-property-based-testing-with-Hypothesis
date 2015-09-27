@@ -40,12 +40,11 @@ $$$
 ```python
 class NaivePriorityQueue(object):
     """
-    A priority queue is a collection which returns items in sorted order.
-    This is a naive implementation with O(N) `put()` and O(1) `get()`.
+    A priority queue moves the smallest item to the front.
+    Naive implementation with O(N) `put()` and O(1) `get()`.
     """
-    def __init__(self, items=()):
-        self._items = list(items)
-        self._items.sort()
+    def __init__(self):
+        self._items = []
 
     def __len__(self):
         return len(self._items)
@@ -56,7 +55,7 @@ class NaivePriorityQueue(object):
         self._items.sort()
 
     def get(self):
-        """Remove and return the smallest item in the collection."""
+        """Remove and return the smallest item."""
         return self._items.pop(0)
 
 ```
@@ -76,15 +75,21 @@ $$$
 ```python
 from naive_pqueue import NaivePriorityQueue
 
+def mkpq(items):
+    """Create and fill a NaivePriorityQueue."""
+    pq = NaivePriorityQueue()
+    [pq.put(item) for item in items]
+    return pq
+
 def test_get_only():
     """If there's only one item, we get that."""
-    pq = NaivePriorityQueue(["a"])
+    pq = mkpq(["a"])
     assert pq.get() == "a"
     assert len(pq) == 0
 
 def test_get_both():
     """If there are two items, we get both in order."""
-    pq = NaivePriorityQueue(["a", "b"])
+    pq = mkpq(["a", "b"])
     assert pq.get() == "a"
     assert pq.get() == "b"
     assert len(pq) == 0
@@ -97,15 +102,19 @@ def test_put_only():
 
 def test_put_small():
     """If we put a small item, it lands at the front."""
-    pq = NaivePriorityQueue(["b", "c"])
+    pq = mkpq(["b", "c"])
     pq.put("a")
     assert pq._items == ["a", "b", "c"]
 
 def test_put_big():
     """If we put a big item, it lands at the back."""
-    pq = NaivePriorityQueue(["a", "b"])
+    pq = mkpq(["a", "b"])
     pq.put("c")
     assert pq._items == ["a", "b", "c"]
+
+# And many more that I didn't write because I got bored and
+# wandered off to work on something more interesting or play
+# videogames or eat lunch.
 
 ```
 
@@ -175,14 +184,16 @@ from naive_pqueue import NaivePriorityQueue
 class VerifyPriorityQueueCorrect(VerifyCorrect):
     def get_all_items(self, items=number_list):
         """We get every item exactly once."""
-        pq = NaivePriorityQueue(items)
+        pq = NaivePriorityQueue()
+        [pq.put(item) for item in items]
         while len(pq) > 0:
             items.remove(pq.get())
         assert len(items) == 0
 
     def get_items_in_order(self, items=number_list):
         """We get items in sorted order."""
-        pq = NaivePriorityQueue(items)
+        pq = NaivePriorityQueue()
+        [pq.put(item) for item in items]
         prior = current = pq.get()
         while len(pq) > 0:
             prior, current = current, pq.get()
@@ -233,7 +244,8 @@ from naive_pqueue import NaivePriorityQueue
 @given(items=st.lists(st.integers()))
 def test_get_all_items(items):
     """We get every item exactly once."""
-    pq = NaivePriorityQueue(items)
+    pq = NaivePriorityQueue()
+    [pq.put(item) for item in items]
     while len(pq) > 0:
         items.remove(pq.get())
     assert len(items) == 0
@@ -241,7 +253,8 @@ def test_get_all_items(items):
 @given(items=st.lists(st.integers(), min_size=1))
 def test_get_items_in_order(items):
     """We get items in sorted order."""
-    pq = NaivePriorityQueue(items)
+    pq = NaivePriorityQueue()
+    [pq.put(item) for item in items]
     prior = current = pq.get()
     while len(pq) > 0:
         prior, current = current, pq.get()
@@ -439,7 +452,7 @@ A strategy is a set of rules:
 * It knows how to simplify values. <!--{_class="fragment"}-->
   *(Very important!)* <!--{_class="fragment"}-->
 
-* It is composable. <!--{_class="fragment"}-->
+* It's composable. <!--{_class="fragment"}-->
   *(Building blocks for complex data.)* <!--{_class="fragment"}-->
 
 Built-in strategies are very clever, so yours can be simple.
@@ -683,12 +696,11 @@ $$$
 ```python
 class NaivePriorityQueue(object):
     """
-    A priority queue is a collection which returns items in sorted order.
-    This is a naive implementation with O(N) `put()` and O(1) `get()`.
+    A priority queue moves the smallest item to the front.
+    Naive implementation with O(N) `put()` and O(1) `get()`.
     """
-    def __init__(self, items=()):
-        self._items = list(items)
-        self._items.sort()
+    def __init__(self):
+        self._items = []
 
     def __len__(self):
         return len(self._items)
@@ -699,14 +711,113 @@ class NaivePriorityQueue(object):
         self._items.sort()
 
     def get(self):
-        """Remove and return the smallest item in the collection."""
+        """Remove and return the smallest item."""
         return self._items.pop(0)
 
 ```
 
 $$$NOTES
 
-Very simple example, valid for all integers.
+Remember this guy? We don't want to use him in production.
+
+$$$
+
+### Much better priority queue
+
+```python
+class FastPriorityQueue(object):
+    """
+    A priority queue moves the smallest item to the front.
+    Heap-based implementation with O(log N) `put()` and `get()`.
+    """
+    def __init__(self):
+        self._heap = []
+
+    def __len__(self):
+        return len(self._heap)
+
+    def put(self, item):
+        """Add an item to the collection."""
+        self._heap.append(item)
+        self._swim(len(self))
+
+    def get(self):
+        """Remove and return the smallest item in the collection."""
+        self._swap(1, len(self))
+        item = self._heap.pop()
+        self._sink(1)
+        return item
+
+    def _less(self, i, j):
+        """True if i_val and j_val exist and i_val < j_val, else False."""
+        if max([i, j]) > len(self):
+            return False
+        return self._heap[i-1] < self._heap[j-1]
+
+    def _swap(self, i, j):
+        """Swap i_val and j_val"""
+        self._heap[i-1], self._heap[j-1] = self._heap[j-1], self._heap[i-1]
+
+    def _swim(self, i):
+        """Move i_val up the heap until it's in a valid position."""
+        while i > 1 and self._less(i, i/2):
+            self._swap(i, i/2)
+            i /= 2
+
+    def _sink(self, i):
+        """Move i_val down the heap until it's in a valid position."""
+        while i < len(self):
+            j = i*2
+            if self._less(j+1, j):
+                j += 1
+            if not self._less(j, i):
+                return
+            self._swap(i, j)
+            i = j
+
+```
+
+$$$NOTES
+
+This guy is much better, but much more complex.
+
+$$$
+
+### Stateful test
+
+```python
+from hypothesis import assume, strategies as st
+from hypothesis.stateful import RuleBasedStateMachine, rule
+from fast_pqueue import FastPriorityQueue
+
+class PriorityQueueStateMachine(RuleBasedStateMachine):
+    def __init__(self):
+        super(PriorityQueueStateMachine, self).__init__()
+        self.items = []
+        self.pq = FastPriorityQueue()
+
+    @rule(item=st.integers())
+    def check_put(self, item):
+        assert len(self.pq) == len(self.items)
+        self.pq.put(item)
+        self.items.append(item)
+
+    @rule()
+    def check_get(self):
+        assert len(self.pq) == len(self.items)
+        assume(len(self.items) > 0)
+        item = min(self.items)
+        self.items.remove(item)
+        assert self.pq.get() == item
+
+TestPriorityQueue = PriorityQueueStateMachine.TestCase
+
+```
+<!--{_style="font-size:50%"}-->
+
+$$$NOTES
+
+This guy is much better, but much more complex.
 
 
 $$$

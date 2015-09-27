@@ -118,7 +118,7 @@ A strategy is a set of rules:
 * It knows how to simplify values. <!--{_class="fragment"}-->
   *(Very important!)* <!--{_class="fragment"}-->
 
-* It is composable. <!--{_class="fragment"}-->
+* It's composable. <!--{_class="fragment"}-->
   *(Building blocks for complex data.)* <!--{_class="fragment"}-->
 
 Built-in strategies are very clever, so yours can be simple.

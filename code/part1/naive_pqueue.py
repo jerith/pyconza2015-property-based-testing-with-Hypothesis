@@ -1,11 +1,10 @@
 class NaivePriorityQueue(object):
     """
-    A priority queue is a collection which returns items in sorted order.
-    This is a naive implementation with O(N) `put()` and O(1) `get()`.
+    A priority queue moves the smallest item to the front.
+    Naive implementation with O(N) `put()` and O(1) `get()`.
     """
-    def __init__(self, items=()):
-        self._items = list(items)
-        self._items.sort()
+    def __init__(self):
+        self._items = []
 
     def __len__(self):
         return len(self._items)
@@ -16,5 +15,5 @@ class NaivePriorityQueue(object):
         self._items.sort()
 
     def get(self):
-        """Remove and return the smallest item in the collection."""
+        """Remove and return the smallest item."""
         return self._items.pop(0)

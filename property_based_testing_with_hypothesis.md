@@ -30,6 +30,11 @@ $$$
 $$$
 $$$
 
+<!-- @include 3_stateful_tests.part.md -->
+
+$$$
+$$$
+
 ## The end of the slides
 
 <br/><br/>
