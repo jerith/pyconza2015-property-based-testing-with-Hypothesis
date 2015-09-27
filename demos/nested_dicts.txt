@@ -1,0 +1,20 @@
+>>> nest_dict = lambda vs: dictionaries(text("abc", max_size=5), vs)
+>>> nested_dicts = recursive(integers(0, 100) | none(), nest_dict)
+>>> pprint(nested_dicts.example())
+None
+>>> pprint(nested_dicts.example())
+{u'a': None, u'b': 49}
+>>> pprint(nested_dicts.example())
+28
+>>> pprint(nested_dicts.example())
+{}
+>>> pprint(nested_dicts.example())
+{u'': None,
+ u'a': {},
+ u'aa': {u'': 84,
+         u'b': 13,
+         u'bbb': 1,
+         u'cbbcc': 84},
+ u'b': 0}
+>>> pprint(nested_dicts.example())
+{u'': 54, u'c': 28, u'cc': 87, u'ccc': 35}

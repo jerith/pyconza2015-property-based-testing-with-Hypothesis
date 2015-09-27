@@ -1,0 +1,10 @@
+>>> print square_text.example()
+42
+44
+>>> print square_text.example()
+7
+>>> print square_text.example()
+5005
+8274
+9505
+0599

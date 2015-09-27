@@ -1,0 +1,9 @@
+========================= test session starts ==========================
+failtest_weird_edge_case.py F
+=============================== FAILURES ===============================
+_________________________ test_weird_edge_case _________________________
+[Traceback elided]
+ZeroDivisionError: integer division or modulo by zero
+------------------------------ Hypothesis ------------------------------
+Falsifying example: test_weird_edge_case(x=1337)
+======================= 1 failed in 0.01 seconds =======================

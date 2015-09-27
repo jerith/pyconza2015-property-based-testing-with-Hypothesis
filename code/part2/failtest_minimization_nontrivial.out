@@ -1,0 +1,10 @@
+========================= test session starts ==========================
+failtest_minimization_nontrivial.py F
+=============================== FAILURES ===============================
+___________________ test_sum_less_than_42_nontrivial ___________________
+[Traceback elided]
+AssertionError: assert 42 < 42
+ +  where 42 = sum([0, 42, 0])
+------------------------------ Hypothesis ------------------------------
+Falsifying example: test_sum_less_than_42_nontrivial(numbers=[0, 42, 0])
+======================= 1 failed in 0.11 seconds =======================

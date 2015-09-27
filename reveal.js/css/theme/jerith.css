@@ -11,6 +11,18 @@ html * {
   color-profile: sRGB;
   rendering-intent: auto; }
 
+.hljs-pytest-passed {
+  color: #659900; }
+
+.hljs-pytest-warning {
+  color: #b58900; }
+
+.hljs-pytest-failed {
+  color: #dc322f; }
+
+.hljs-pytest-dim {
+  opacity: 0.5; }
+
 /*********************************************
  * GLOBAL STYLES
  *********************************************/
@@ -279,6 +291,9 @@ body {
 
 .reveal ul {
   line-height: 2em; }
+
+.reveal code {
+  color: #c5c8c6; }
 
 .reveal pre code {
   overflow-x: hidden;

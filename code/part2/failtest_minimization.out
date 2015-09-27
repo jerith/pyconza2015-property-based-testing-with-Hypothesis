@@ -1,0 +1,10 @@
+========================= test session starts ==========================
+failtest_minimization.py F
+=============================== FAILURES ===============================
+________________________ test_sum_less_than_42 _________________________
+[Traceback elided]
+AssertionError: assert 42 < 42
+ +  where 42 = sum([42])
+------------------------------ Hypothesis ------------------------------
+Falsifying example: test_sum_less_than_42(numbers=[42])
+======================= 1 failed in 0.05 seconds =======================

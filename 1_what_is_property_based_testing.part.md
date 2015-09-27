@@ -98,11 +98,9 @@ $$$NOTES
 
 We have some methods that test correctness *in general*.
 
-Although these reimplement too much of the code under test.
+Not complete, though. Doesn't test `add()`.
 
 We're only specifying the kind of input, not specific values.
-
-But how does this Sufficiently Advanced Technology work?
 
 $$$
 
@@ -121,6 +119,8 @@ $$$
 $$$NOTES
 
 You like non-deterministic tests, right?
+
+More on minimisation later.
 
 Lots of checks means lots of time.
 

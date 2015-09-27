@@ -50,6 +50,17 @@
     <script src="js/reveal.js"></script>
 
     <script>
+      function pytestresult(hljs) {
+        // This uses the "compiled" names for things.
+        return { c: [
+          { cN: 'pytest-warning',
+            b: '^(=+ )?\\d+ passed.*pytest-warnings', e: '$' },
+          { cN: 'pytest-passed', b: '^(=+ )?\\d+ passed', e: '$' },
+          { cN: 'pytest-failed', b: '^(=+ )?\\d+ failed', e: '$' },
+          { cN: 'pytest-dim', b: '^(===|---|___).*\\1$' }
+        ]};
+      };
+
       // Full list of configuration options available at:
       // https://github.com/hakimel/reveal.js#configuration
       Reveal.initialize({
@@ -66,7 +77,7 @@
           { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
           { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
           { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.registerLanguage("pytestresult", pytestresult); hljs.initHighlightingOnLoad(); } },
           { src: 'plugin/zoom-js/zoom.js', async: true },
           { src: 'plugin/notes/notes.js', async: true }
         ]

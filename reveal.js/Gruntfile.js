@@ -131,7 +131,7 @@ module.exports = function(grunt) {
 				files: [ 'index.html', '*.md' ]
 			},
             markdown: {
-                files: [ '../*.md', '../demos/*.txt' ],
+                files: [ '../*.md', '../demos/*.txt', '../code/**/*.out' ],
                 tasks: [ 'preprocess' ]
             },
             python: {
@@ -154,7 +154,7 @@ module.exports = function(grunt) {
         },
 
         exec: {
-            pytest: 'py.test --tb=native --flake8 ../code'
+            pytest: 'py.test --flake8 ../code'
         }
 
 	});

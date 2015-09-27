@@ -1,8 +1,0 @@
->>> even_integers = strategies.integers().filter(lambda x: x % 2 == 0)
->>> even_integers.example()
--54
->>> even_integers.example()
-0
->>> even_integers.example()
--110212872381391885439645758881510120016L
-

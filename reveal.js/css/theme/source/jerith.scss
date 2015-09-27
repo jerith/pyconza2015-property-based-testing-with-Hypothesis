@@ -55,6 +55,24 @@ $selectionBackgroundColor: $magenta;
 $headingMargin: -$blockMargin 0 $blockMargin*2 0;
 
 
+.hljs-pytest-passed {
+  // $green is too yellow.
+  color: #659900;
+}
+
+.hljs-pytest-warning {
+  color: $yellow;
+}
+
+.hljs-pytest-failed {
+  color: $red;
+}
+
+.hljs-pytest-dim {
+  opacity: 0.5;
+}
+
+
 // Theme template ------------------------------
 @import "../template/theme";
 // ---------------------------------------------
@@ -71,6 +89,10 @@ $headingMargin: -$blockMargin 0 $blockMargin*2 0;
 
 .reveal ul {
   line-height: 2em;
+}
+
+.reveal code {
+  color: #c5c8c6;
 }
 
 .reveal pre code {

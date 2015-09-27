@@ -196,11 +196,9 @@ $$$NOTES
 
 We have some methods that test correctness *in general*.
 
-Although these reimplement too much of the code under test.
+Not complete, though. Doesn't test `add()`.
 
 We're only specifying the kind of input, not specific values.
-
-But how does this Sufficiently Advanced Technology work?
 
 $$$
 
@@ -219,6 +217,8 @@ $$$
 $$$NOTES
 
 You like non-deterministic tests, right?
+
+More on minimisation later.
 
 Lots of checks means lots of time.
 
@@ -266,70 +266,184 @@ $$$
 <br/>
 <br/>
 
-### Hypothesis
-
-$$$NOTES
+### Hypothesis basics
 
 $$$
 
-### Writing tests
+### Managing generated input <span style="opacity: 0.3">(1)</span>
+
+Additive inverse (integers)
 
 ```python
 from hypothesis import given, strategies as st
 
-
 @given(st.integers())
-def test_addition_identity(x):
-    assert x + 0 == x
-
-
-@given(st.integers(), st.integers())
-def test_addition_commutative(x, y):
-    assert x + y == y + x
-
-
-@given(st.integers(), st.integers(), st.integers())
-def test_addition_associative(x, y, z):
-    assert (x + y) + z == x + (y + z)
+def test_additive_inverse_int(x):
+    """Double additive inverse has no effect."""
+    assert x == -(-x)
 
 ```
 
+```pytestresult
+========================= test session starts ==========================
+test_additive_inverse_int.py .
+======================= 1 passed in 0.13 seconds =======================
+
+```
+<!--{_class="fragment"}-->
+
 $$$NOTES
 
-Other tools call them generators.
-
-.example() generates a random example.
-
-Useful for more than just tests.
+Very simple example, valid for all integers.
 
 $$$
 
-### Built-in Strategies
+### Managing generated input <span style="opacity: 0.3">(2)</span>
+
+Additive inverse (floating point)
 
 ```python
->>> from hypothesis import strategies
+from hypothesis import given, strategies as st
 
->>> text = strategies.text()
->>> text.example()
-u''
->>> text.example()
-u'm<\x7f&\x02\u0393\r`\x8d<&\x1c\u0393mm\r\x1c\x18\x0c\x02\xa5'
-
->>> abctext = strategies.text(alphabet="abc")
->>> abctext.example()
-u'cacaccccacaaacc'
->>> abctext.example()
-u'aaaaaaaabaacabaaacaaaaaabaaaaac'
-
->>> lists_of_ints = strategies.lists(strategies.integers(-1000, 1000))
->>> lists_of_ints.example()
-[-947, 873, -947, -37, 936, 936, 936]
->>> lists_of_ints.example()
-[-805, 855, 674, -236, 447, 775, -168, -909, -512, 220, 994, 278, -803, -901]
->>> lists_of_ints.example()
-[-75, 487, -468]
+@given(st.floats())
+def test_additive_inverse_float(x):
+    """Double additive inverse has no effect."""
+    assert x == -(-x)
 
 ```
+
+```pytestresult
+========================= test session starts ==========================
+failtest_additive_inverse_float.py F
+=============================== FAILURES ===============================
+_____________________ test_additive_inverse_float ______________________
+[Traceback elided]
+AssertionError: assert nan == --nan
+------------------------------ Hypothesis ------------------------------
+Falsifying example: test_additive_inverse_float(x=nan)
+======================= 1 failed in 0.03 seconds =======================
+
+```
+<!--{_class="fragment"}-->
+
+$$$NOTES
+
+Fails because `NaN` is not equal to anything.
+
+$$$
+
+### Managing generated input <span style="opacity: 0.3">(3)</span>
+
+Additive inverse (floating point) without NaN
+
+```python
+import math
+from hypothesis import given, assume, strategies as st
+
+@given(st.floats())
+def test_additive_inverse_float(x):
+    """Double additive inverse has no effect (except NaN)."""
+    assume(not math.isnan(x))
+    assert x == -(-x)
+
+```
+
+```pytestresult
+========================= test session starts ==========================
+test_additive_inverse_float.py .
+======================= 1 passed in 0.07 seconds =======================
+
+```
+<!--{_class="fragment"}-->
+
+$$$NOTES
+
+`assume()` tells Hypothesis to ignore this example.
+
+$$$
+
+### Managing generated input <span style="opacity: 0.3">(4)</span>
+
+```python
+from hypothesis import given, strategies as st
+
+@given(st.integers())
+def test_weird_edge_case(x):
+    """A number divided by itself is always 1."""
+    assert (x - 1337) / (x - 1337) == 1
+
+```
+
+Note the potential division by zero.
+
+```pytestresult
+========================= test session starts ==========================
+test_weird_edge_case.py .
+======================= 1 passed in 0.06 seconds =======================
+
+```
+<!--{_class="fragment"}-->
+
+$$$NOTES
+
+Random generation doesn't find everything.
+
+Built-in strategies are cleverly weighted to include common edge cases.
+
+$$$
+
+### Managing generated input <span style="opacity: 0.3">(5)</span>
+
+```python
+from hypothesis import given, example, strategies as st
+
+@example(1337)
+@given(st.integers())
+def test_weird_edge_case(x):
+    """A number divided by itself is always 1, right?"""
+    assert (x - 1337) / (x - 1337) == 1
+
+```
+
+We explicitly include the divide-by-zero input.
+
+```pytestresult
+========================= test session starts ==========================
+failtest_weird_edge_case.py F
+=============================== FAILURES ===============================
+_________________________ test_weird_edge_case _________________________
+[Traceback elided]
+ZeroDivisionError: integer division or modulo by zero
+------------------------------ Hypothesis ------------------------------
+Falsifying example: test_weird_edge_case(x=1337)
+======================= 1 failed in 0.01 seconds =======================
+
+```
+<!--{_class="fragment"}-->
+
+$$$NOTES
+
+Random generation doesn't find everything.
+
+Built-in strategies are cleverly weighted to include common edge cases.
+
+$$$
+
+### Strategies
+
+A strategy is a set of rules:
+
+* It knows how to generate values. <!--{_class="fragment"}-->
+  *(Of course.)* <!--{_class="fragment"}-->
+
+* It knows how to simplify values. <!--{_class="fragment"}-->
+  *(Very important!)* <!--{_class="fragment"}-->
+
+* It is composable. <!--{_class="fragment"}-->
+  *(Building blocks for complex data.)* <!--{_class="fragment"}-->
+
+Built-in strategies are very clever, so yours can be simple.
+<!--{_class="fragment"}-->
 
 $$$NOTES
 
@@ -337,11 +451,43 @@ Other tools call them generators.
 
 .example() generates a random example.
 
-Useful for more than just tests.
+$$$
+
+### Strategies: combinations
+
+ints or floats or strings:
+
+```python
+>>> ints_or_floats_or_strings = integers() | floats() | text("1234567890")
+>>> ints_or_floats_or_strings.example()
+u'25439943'
+>>> ints_or_floats_or_strings.example()
+-654234146027241025880061147001483025751L
+>>> ints_or_floats_or_strings.example()
+-0.7821238706527601
+>>> ints_or_floats_or_strings.example()
+-3.032482863887629e+132
+>>> ints_or_floats_or_strings.example()
+u'8666366964400506'
+
+```
+
+Beware:
+<!--{_class="fragment" data-fragment-index="1"}-->
+
+<span class="fragment" data-fragment-index="1">
+`text()|none()` generates half strings, half `None`.
+</span>
+
+$$$NOTES
+
+Sometimes you want to choose from multiple strategies.
 
 $$$
 
-### Adapting strategies: filter
+### Strategies: filter and map
+
+Lists with even lengths:
 
 ```python
 >>> even_lists = lists(integers(0, 100)).filter(lambda l: len(l) % 2 == 0)
@@ -354,44 +500,213 @@ $$$
 
 ```
 
+Odd integers:
+<!--{_class="fragment" data-fragment-index="1"}-->
+
+```python
+>>> odd_integers = integers().map(lambda x: x * 2 + 1)
+>>> odd_integers.example()
+45
+>>> odd_integers.example()
+690832349825714274807131201360674962691L
+>>> odd_integers.example()
+-841
+
+```
+<!--{_class="fragment" data-fragment-index="1"}-->
+
 $$$NOTES
+
+Filter predicates mustn't be too hard to satisfy.
+
+Use map instead of filter where possible.
 
 $$$
 
-### Adapting strategies: map
+### Strategies: flatmap
+
+Square text:
 
 ```python
->>> even_integers = strategies.integers().filter(lambda x: x % 2 == 0)
->>> even_integers.example()
--54
->>> even_integers.example()
-0
->>> even_integers.example()
--110212872381391885439645758881510120016L
+from hypothesis.strategies import integers, text, lists
 
+def text_line(size):
+    return text("1234567890", min_size=size, max_size=size)
+
+def square_lines(size):
+    return lists(text_line(size), min_size=size, max_size=size)
+
+square_text = integers(1, 5).flatmap(square_lines).map("\n".join)
 
 ```
 
 ```python
->>> even_integers = strategies.integers().map(lambda x: x * 2)
->>> even_integers.example()
-6
->>> even_integers.example()
--52
->>> even_integers.example()
--621603898346041721844744845583782563802L
+>>> print square_text.example()
+42
+44
+>>> print square_text.example()
+7
+>>> print square_text.example()
+5005
+8274
+9505
+0599
 
 ```
 
 $$$NOTES
 
-Other tools call them generators.
-
-.example() generates a random example.
-
-Useful for more than just tests.
+You probably won't use this much.
 
 $$$
+
+### Strategies: recursive
+
+Nested dicts:
+
+```python
+>>> nest_dict = lambda vs: dictionaries(text("abc", max_size=5), vs)
+>>> nested_dicts = recursive(integers(0, 100) | none(), nest_dict)
+>>> pprint(nested_dicts.example())
+None
+>>> pprint(nested_dicts.example())
+{u'a': None, u'b': 49}
+>>> pprint(nested_dicts.example())
+28
+>>> pprint(nested_dicts.example())
+{}
+>>> pprint(nested_dicts.example())
+{u'': None,
+ u'a': {},
+ u'aa': {u'': 84,
+         u'b': 13,
+         u'bbb': 1,
+         u'cbbcc': 84},
+ u'b': 0}
+>>> pprint(nested_dicts.example())
+{u'': 54, u'c': 28, u'cc': 87, u'ccc': 35}
+
+```
+
+$$$NOTES
+
+This stuff is in the docs.
+
+$$$
+
+### Minimization <span style="opacity: 0.3">(1)</span>
+
+```python
+from hypothesis import given, strategies as st
+
+@given(st.lists(st.integers()))
+def test_sum_less_than_42(numbers):
+    assert sum(numbers) < 42
+
+```
+
+```pytestresult
+========================= test session starts ==========================
+failtest_minimization.py F
+=============================== FAILURES ===============================
+________________________ test_sum_less_than_42 _________________________
+[Traceback elided]
+AssertionError: assert 42 < 42
+ +  where 42 = sum([42])
+------------------------------ Hypothesis ------------------------------
+Falsifying example: test_sum_less_than_42(numbers=[42])
+======================= 1 failed in 0.05 seconds =======================
+
+```
+<!--{_class="fragment"}-->
+
+The falsifying example is the simplest failing input.
+<!--{_class="fragment"}-->
+
+$$$NOTES
+
+What witchcraft is this!?
+
+Minimization filters out the noise of random input.
+
+$$$
+
+### Minimization <span style="opacity: 0.3">(2)</span>
+
+```python
+from hypothesis import given, strategies as st
+
+@given(st.lists(st.integers()))
+def test_sum_less_than_42_nontrivial(numbers):
+    if len(numbers) > 2:
+        assert sum(numbers) < 42
+
+```
+
+```pytestresult
+========================= test session starts ==========================
+failtest_minimization_nontrivial.py F
+=============================== FAILURES ===============================
+___________________ test_sum_less_than_42_nontrivial ___________________
+[Traceback elided]
+AssertionError: assert 42 < 42
+ +  where 42 = sum([0, 42, 0])
+------------------------------ Hypothesis ------------------------------
+Falsifying example: test_sum_less_than_42_nontrivial(numbers=[0, 42, 0])
+======================= 1 failed in 0.11 seconds =======================
+
+```
+
+Works for more complicated cases as well.
+
+$$$NOTES
+
+Not perfect. Sometimes non-minimal data gets through.
+
+
+$$$
+$$$
+
+## Part 3
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+### Stateful testing
+
+$$$
+
+### Back to our priority queue
+
+```python
+class NaivePriorityQueue(object):
+    """
+    A priority queue is a collection which returns items in sorted order.
+    This is a naive implementation with O(N) `put()` and O(1) `get()`.
+    """
+    def __init__(self, items=()):
+        self._items = list(items)
+        self._items.sort()
+
+    def __len__(self):
+        return len(self._items)
+
+    def put(self, item):
+        """Add an item to the collection."""
+        self._items.append(item)
+        self._items.sort()
+
+    def get(self):
+        """Remove and return the smallest item in the collection."""
+        return self._items.pop(0)
+
+```
+
+$$$NOTES
+
+Very simple example, valid for all integers.
 
 
 $$$
