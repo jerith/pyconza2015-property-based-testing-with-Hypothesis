@@ -32,7 +32,7 @@ $$$
 ### How we usually write tests
 
 ```python
-<!-- @include code/part1/tests/test_pqueue_example.py -->
+<!-- @include code/part1/test_pqueue_example.py -->
 ```
 
 $$$NOTES
@@ -74,7 +74,7 @@ In a world made of unicorns and kittens and rainbows...
 <br/>
 
 ```python
-<!-- @include code/part1/tests/test_pqueue_magic.py -->
+<!-- @include code/part1/test_pqueue_magic.py -->
 ```
 <!-- {_class="fragment"} -->
 
@@ -91,7 +91,7 @@ $$$
 ### Maybe without the unicorns
 
 ```python
-<!-- @include code/part1/tests/test_pqueue_sufficiently_advanced.py -->
+<!-- @include code/part1/test_pqueue_sufficiently_advanced.py -->
 ```
 
 $$$NOTES
@@ -129,7 +129,7 @@ $$$
 ### For real, with Hypothesis
 
 ```python
-<!-- @include code/part1/tests/test_pqueue_properties.py -->
+<!-- @include code/part1/test_pqueue_properties.py -->
 ```
 
 $$$NOTES
