@@ -9,6 +9,31 @@
 
 $$$
 
+### Strategies
+
+A strategy is a set of rules:
+
+* It knows how to generate values. <!--@exec frag("hc", "1")-->
+  *(Of course.)* <!-- @exec frag("vhc", "1") -->
+
+* It knows how to simplify values. <!--@exec frag("hc", "2")-->
+  *(Very important!)* <!--@exec frag("vhc", "2")-->
+
+* It's composable. <!--@exec frag("hc", "3")-->
+  *(Building blocks for complex data.)* <!--@exec frag("vhc", "3")-->
+
+
+Built-in strategies are very clever, so yours can be simple.
+<!--@exec frag()-->
+
+$$$NOTES
+
+Other tools call them generators.
+
+.example() generates a random example.
+
+$$$
+
 ### Managing generated input <span style="opacity: 0.3">(1)</span>
 
 Additive inverse (integers)
@@ -20,7 +45,7 @@ Additive inverse (integers)
 ```pytestresult
 <!-- @include code/part2/test_additive_inverse_int.out -->
 ```
-<!--{_class="fragment"}-->
+<!--@exec frag()-->
 
 $$$NOTES
 
@@ -39,7 +64,7 @@ Additive inverse (floating point)
 ```pytestresult
 <!-- @include code/part2/failtest_additive_inverse_float.out -->
 ```
-<!--{_class="fragment"}-->
+<!--@exec frag()-->
 
 $$$NOTES
 
@@ -58,7 +83,7 @@ Additive inverse (floating point) without NaN
 ```pytestresult
 <!-- @include code/part2/test_additive_inverse_float.out -->
 ```
-<!--{_class="fragment"}-->
+<!--@exec frag()-->
 
 $$$NOTES
 
@@ -77,7 +102,7 @@ Note the potential division by zero.
 ```pytestresult
 <!-- @include code/part2/test_weird_edge_case.out -->
 ```
-<!--{_class="fragment"}-->
+<!--@exec frag()-->
 
 $$$NOTES
 
@@ -98,37 +123,13 @@ We explicitly include the divide-by-zero input.
 ```pytestresult
 <!-- @include code/part2/failtest_weird_edge_case.out -->
 ```
-<!--{_class="fragment"}-->
+<!--@exec frag()-->
 
 $$$NOTES
 
 Random generation doesn't find everything.
 
 Built-in strategies are cleverly weighted to include common edge cases.
-
-$$$
-
-### Strategies
-
-A strategy is a set of rules:
-
-* It knows how to generate values. <!--{_class="fragment"}-->
-  *(Of course.)* <!--{_class="fragment"}-->
-
-* It knows how to simplify values. <!--{_class="fragment"}-->
-  *(Very important!)* <!--{_class="fragment"}-->
-
-* It's composable. <!--{_class="fragment"}-->
-  *(Building blocks for complex data.)* <!--{_class="fragment"}-->
-
-Built-in strategies are very clever, so yours can be simple.
-<!--{_class="fragment"}-->
-
-$$$NOTES
-
-Other tools call them generators.
-
-.example() generates a random example.
 
 $$$
 
@@ -140,12 +141,9 @@ ints or floats or strings:
 <!-- @include demos/ints_or_floats_or_strings.txt -->
 ```
 
-Beware:
-<!--{_class="fragment" data-fragment-index="1"}-->
+Beware: `text()|none()` ⇒ half strings, half `None`.
 
-<span class="fragment" data-fragment-index="1">
-`text()|none()` generates half strings, half `None`.
-</span>
+<!--@exec frag("", "1")-->
 
 $$$NOTES
 
@@ -162,12 +160,12 @@ Lists with even lengths:
 ```
 
 Odd integers:
-<!--{_class="fragment" data-fragment-index="1"}-->
+<!--@exec frag("", "1")-->
 
 ```python
 <!-- @include demos/odd_integers.txt -->
 ```
-<!--{_class="fragment" data-fragment-index="1"}-->
+<!--@exec frag("", "1")-->
 
 $$$NOTES
 
@@ -218,10 +216,10 @@ $$$
 ```pytestresult
 <!-- @include code/part2/failtest_minimization.out -->
 ```
-<!--{_class="fragment"}-->
+<!--@exec frag()-->
 
 The falsifying example is the simplest failing input.
-<!--{_class="fragment"}-->
+<!--@exec frag()-->
 
 $$$NOTES
 

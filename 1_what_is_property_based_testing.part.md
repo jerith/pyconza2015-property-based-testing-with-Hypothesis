@@ -47,15 +47,15 @@ $$$
 
 ### Issues with example-based tests
 
-* Tedious to write. <!--{_class="fragment"}-->
+* Tedious to write. <!--@exec frag()-->
 
-* Lots of repetitition. <!--{_class="fragment"}-->
+* Lots of repetitition. <!--@exec frag()-->
 
-* Painful to maintain. <!--{_class="fragment"}-->
+* Painful to maintain. <!--@exec frag()-->
 
-* Focus on low-level details. <!--{_class="fragment"}-->
+* Focus on low-level details. <!--@exec frag()-->
 
-* ... But infinitely better than no tests at all. <!--{_class="fragment"}-->
+* ... But infinitely better than no tests at all. <!--@exec frag()-->
 
 $$$NOTES
 
@@ -76,11 +76,13 @@ In a world made of unicorns and kittens and rainbows...
 ```python
 <!-- @include code/part1/test_pqueue_magic.py -->
 ```
-<!-- {_class="fragment"} -->
+<!--@exec frag()-->
 
 <br/>
 
-<p class="fragment">...but how does `assert_correct` know what's correct?</p>
+...but how does `assert_correct` know what's correct?
+
+<!--@exec frag()-->
 
 $$$NOTES
 
@@ -106,15 +108,15 @@ $$$
 
 ### How property-based tests work
 
-* Properties are assertions about invariants. <!--{_class="fragment"}-->
+* Properties are assertions about invariants. <!--@exec frag()-->
 
-* Lots of checks with randomly generated input. <!--{_class="fragment"}-->
+* Lots of checks with randomly generated input. <!--@exec frag()-->
 
-* Failure case minimisation. <!--{_class="fragment"}-->
+* Failure case minimisation. <!--@exec frag()-->
 
-* Focus on high-level behaviour. <!--{_class="fragment"}-->
+* Focus on high-level behaviour. <!--@exec frag()-->
 
-* ... But no silver bullet. <!--{_class="fragment"}-->
+* ... But no silver bullet. <!--@exec frag()-->
 
 $$$NOTES
 

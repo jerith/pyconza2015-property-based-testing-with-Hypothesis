@@ -143,6 +143,20 @@ module.exports = function(grunt) {
         preprocess: {
             options: {
                 context: {
+                    frag: function(classes, index) {
+                        // console.log("foo <|"+classes+"|><|"+index+"|>");
+                        var output = '<!--{_class="fragment';
+                        if (classes) {
+                            output += ' ' + classes;
+                        }
+                        output += '"';
+                        if (index !== undefined) {
+                            output += ' data-fragment-index="' + index + '"';
+                        }
+                        output += '}-->';
+                        // console.log("bar <|"+output+"|>");
+                        return output;
+                    },
                     DEBUG: true
                 }
             },

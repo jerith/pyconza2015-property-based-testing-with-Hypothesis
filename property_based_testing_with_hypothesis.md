@@ -30,7 +30,7 @@ $$$
 $$$
 $$$
 
-<!-- @include 3_stateful_tests.part.md -->
+<!-- @include 3_writing_property_based_tests.part.md -->
 
 $$$
 $$$

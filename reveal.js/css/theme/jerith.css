@@ -23,6 +23,20 @@ html * {
 .hljs-pytest-dim {
   opacity: 0.5; }
 
+.reveal sup {
+  font-size: 60%; }
+
+.reveal .slides section .fragment.hc {
+  opacity: 1;
+  visibility: visible; }
+
+.reveal .slides section .fragment.hc.current-fragment, .reveal .slides section .fragment.vhc.current-fragment {
+  color: #1b91ff; }
+
+.reveal span.hblock {
+  display: inline-block;
+  width: 49%; }
+
 /*********************************************
  * GLOBAL STYLES
  *********************************************/

@@ -163,11 +163,13 @@ from naive_pqueue import NaivePriorityQueue
 assert_correct(NaivePriorityQueue)
 
 ```
-<!-- {_class="fragment"} -->
+<!--{_class="fragment"}-->
 
 <br/>
 
-<p class="fragment">...but how does `assert_correct` know what's correct?</p>
+...but how does `assert_correct` know what's correct?
+
+<!--{_class="fragment"}-->
 
 $$$NOTES
 
@@ -194,7 +196,7 @@ class VerifyPriorityQueueCorrect(VerifyCorrect):
         """We get items in sorted order."""
         pq = NaivePriorityQueue()
         [pq.put(item) for item in items]
-        prior = current = pq.get()
+        current = pq.get()
         while len(pq) > 0:
             prior, current = current, pq.get()
             assert prior <= current
@@ -255,7 +257,7 @@ def test_get_items_in_order(items):
     """We get items in sorted order."""
     pq = NaivePriorityQueue()
     [pq.put(item) for item in items]
-    prior = current = pq.get()
+    current = pq.get()
     while len(pq) > 0:
         prior, current = current, pq.get()
         assert prior <= current
@@ -280,6 +282,31 @@ $$$
 <br/>
 
 ### Hypothesis basics
+
+$$$
+
+### Strategies
+
+A strategy is a set of rules:
+
+* It knows how to generate values. <!--{_class="fragment hc" data-fragment-index="1"}-->
+  *(Of course.)* <!--{_class="fragment vhc" data-fragment-index="1"}-->
+
+* It knows how to simplify values. <!--{_class="fragment hc" data-fragment-index="2"}-->
+  *(Very important!)* <!--{_class="fragment vhc" data-fragment-index="2"}-->
+
+* It's composable. <!--{_class="fragment hc" data-fragment-index="3"}-->
+  *(Building blocks for complex data.)* <!--{_class="fragment vhc" data-fragment-index="3"}-->
+
+
+Built-in strategies are very clever, so yours can be simple.
+<!--{_class="fragment"}-->
+
+$$$NOTES
+
+Other tools call them generators.
+
+.example() generates a random example.
 
 $$$
 
@@ -442,30 +469,6 @@ Built-in strategies are cleverly weighted to include common edge cases.
 
 $$$
 
-### Strategies
-
-A strategy is a set of rules:
-
-* It knows how to generate values. <!--{_class="fragment"}-->
-  *(Of course.)* <!--{_class="fragment"}-->
-
-* It knows how to simplify values. <!--{_class="fragment"}-->
-  *(Very important!)* <!--{_class="fragment"}-->
-
-* It's composable. <!--{_class="fragment"}-->
-  *(Building blocks for complex data.)* <!--{_class="fragment"}-->
-
-Built-in strategies are very clever, so yours can be simple.
-<!--{_class="fragment"}-->
-
-$$$NOTES
-
-Other tools call them generators.
-
-.example() generates a random example.
-
-$$$
-
 ### Strategies: combinations
 
 ints or floats or strings:
@@ -485,12 +488,9 @@ u'8666366964400506'
 
 ```
 
-Beware:
-<!--{_class="fragment" data-fragment-index="1"}-->
+Beware: `text()|none()` ⇒ half strings, half `None`.
 
-<span class="fragment" data-fragment-index="1">
-`text()|none()` generates half strings, half `None`.
-</span>
+<!--{_class="fragment" data-fragment-index="1"}-->
 
 $$$NOTES
 
@@ -687,7 +687,197 @@ $$$
 <br/>
 <br/>
 
-### Stateful testing
+### Writing property-based tests
+
+$$$
+
+### What makes a good property?
+
+* True for (almost) all input.
+
+* Does not duplicate the code under test.
+
+* Describes the code under test in a meaningful way.
+
+* Not too expensive to check.
+
+Harder than writing example-based tests, but a lot more useful.
+<!--{_class="fragment"}-->
+
+
+$$$NOTES
+
+Well-defined exceptions are okay, but test separately.
+
+You'll be running these hundreds of times.
+
+$$$
+
+### Tips for defining properties
+
+* <span>Idempotence</span> <!--{_class="fragment hc hblock" data-fragment-index="1"}-->
+  <span>*f( f(x) ) = f(x)*</span> <!--{_class="fragment vhc hblock" data-fragment-index="1"}-->
+
+* <span>Round trip</span> <!--{_class="fragment hc hblock" data-fragment-index="2"}-->
+  <span>*f<sup> -1</sup>( f(x) ) = x*</span> <!--{_class="fragment vhc hblock" data-fragment-index="2"}-->
+
+* <span>Invariant</span> <!--{_class="fragment hc hblock" data-fragment-index="3"}-->
+  <span>*g( f(x) ) = g(x)*</span> <!--{_class="fragment vhc hblock" data-fragment-index="3"}-->
+
+* <span>Transformation</span> <!--{_class="fragment hc hblock" data-fragment-index="4"}-->
+  <span>*f( g(x) ) = g'( f(x) )*</span> <!--{_class="fragment vhc hblock" data-fragment-index="4"}-->
+
+* <span>Verification</span> <!--{_class="fragment hc hblock" data-fragment-index="5"}-->
+  <span>*P( f(x) ) is true*</span> <!--{_class="fragment vhc hblock" data-fragment-index="5"}-->
+
+* <span>Oracle</span> <!--{_class="fragment hc hblock" data-fragment-index="6"}-->
+  <span>*f(x) = g(x)*</span> <!--{_class="fragment vhc hblock" data-fragment-index="6"}-->
+
+<!--{_style="width: 16em"}-->
+
+$$$NOTES
+
+Verification example: Sorted list.
+
+An oracle assumes a known-correct implementation to test against.
+
+$$$
+
+### Idempotent property
+
+```python
+from hypothesis import given, strategies as st
+
+@given(st.text())
+def test_uppercase_idempotent(text):
+    """
+    .upper() only modifies text that is not already uppercase.
+    """
+    uppercase_text = text.upper()
+    assert uppercase_text == uppercase_text.upper()
+
+
+@given(number=st.floats(-1e300, 1e300), decimals=st.integers(0, 5))
+def test_round_idempotent(number, decimals):
+    """
+    Rounding an already-rounded number is a no-op.
+    """
+    rounded = round(number, decimals)
+    assert rounded == round(rounded, decimals)
+
+```
+
+$$$NOTES
+
+Pretty straightforward. Might be slow.
+
+$$$
+
+### Round trip property
+
+```python
+from hypothesis import given, strategies as st
+import json
+
+def nest_data(st_values):
+    return st.lists(st_values) | st.dictionaries(st.text(), st_values)
+
+def nested_data():
+    return st.none() | st.integers() | st.floats(-1e308, 1e308) | st.text()
+
+
+@given(st.recursive(nested_data(), nest_data))
+def test_json_round_trip(data):
+    """
+    Encoding a thing as JSON and decoding it again returns the same thing.
+
+    (This will fail for input that contains tuples, but we don't test that.)
+    """
+    assert data == json.loads(json.dumps(data))
+
+```
+
+$$$NOTES
+
+Beware serialization differences.
+
+$$$
+
+### Invariant property
+
+```python
+from hypothesis import given, strategies as st
+from random import shuffle
+
+@given(st.lists(st.integers()))
+def test_something_invariant(items):
+    """
+    The set of items in a collection does not change when shuffling.
+    """
+    orig_items = list(items)
+    shuffle(items)
+    for item in items:
+        orig_items.remove(item)
+    assert orig_items == []
+
+```
+
+$$$NOTES
+
+$$$
+
+### Transformation property
+
+```python
+from hypothesis import given, strategies as st
+
+@given(st.text())
+def test_uppercase_transformation(text):
+    """
+    Appending a lowercase character before uppercasing is equivalent to
+    appending its uppercase equivalent after uppercasing.
+    """
+    assert text.upper() + 'A' == (text + 'a').upper()
+
+```
+
+$$$NOTES
+
+$$$
+
+### Verification property
+
+```python
+from hypothesis import given, strategies as st
+
+@given(st.text("abcd \t\r\n"))
+def test_no_tabs_after_expandtabs(text):
+    """
+    Expanding tabs replaces all tab characters.
+    """
+    assert "\t" not in text.expandtabs()
+
+```
+
+$$$NOTES
+
+$$$
+
+### Oracle property
+
+```python
+from hypothesis import given, strategies as st
+
+@given(st.text())
+def test_something_oracle(text):
+    """
+    The new thing behaves the same as the old thing.
+    """
+    assert True
+
+```
+
+$$$NOTES
 
 $$$
 

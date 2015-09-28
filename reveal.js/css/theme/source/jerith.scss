@@ -73,6 +73,25 @@ $headingMargin: -$blockMargin 0 $blockMargin*2 0;
 }
 
 
+.reveal sup {
+  font-size: 60%;
+}
+
+.reveal .slides section .fragment.hc {
+  opacity: 1;
+  visibility: visible;
+}
+
+.reveal .slides section .fragment.hc.current-fragment,
+.reveal .slides section .fragment.vhc.current-fragment {
+  color: #1b91ff;
+}
+
+.reveal span.hblock {
+  display: inline-block;
+  width: 49%;
+}
+
 // Theme template ------------------------------
 @import "../template/theme";
 // ---------------------------------------------

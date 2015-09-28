@@ -15,7 +15,7 @@ def test_get_items_in_order(items):
     """We get items in sorted order."""
     pq = NaivePriorityQueue()
     [pq.put(item) for item in items]
-    prior = current = pq.get()
+    current = pq.get()
     while len(pq) > 0:
         prior, current = current, pq.get()
         assert prior <= current
