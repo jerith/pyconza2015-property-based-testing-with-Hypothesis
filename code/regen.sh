@@ -10,7 +10,7 @@ function run_test() {
             echo "Running module for ${pyfile}..."
             python "$pyfile" > "$outfile"
             ;;
-        *)
+        test*|failtest*)
             echo "Running tests for ${pyfile}..."
             py.test "$pyfile" | python "$MYDIR"/filteroutput.py > "$outfile"
             ;;

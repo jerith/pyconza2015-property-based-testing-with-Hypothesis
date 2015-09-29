@@ -632,7 +632,7 @@ $$$
 <br/>
 <br/>
 
-### Writing property-based tests
+### Writing properties
 
 $$$
 
@@ -656,37 +656,9 @@ You'll be running these hundreds of times.
 
 $$$
 
-### Tips for defining properties
-
-* <span>Idempotence</span> <!--{_class="fragment hc" data-fragment-index="1"}-->
-  <span>*f( f(x) ) = f(x)*</span> <!--{_class="fragment vhc" data-fragment-index="1"}-->
-
-* <span>Round trip</span> <!--{_class="fragment hc" data-fragment-index="2"}-->
-  <span>*f<sup> -1</sup>( f(x) ) = x*</span> <!--{_class="fragment vhc" data-fragment-index="2"}-->
-
-* <span>Invariance</span> <!--{_class="fragment hc" data-fragment-index="3"}-->
-  <span>*g( f(x) ) = g(x)*</span> <!--{_class="fragment vhc" data-fragment-index="3"}-->
-
-* <span>Transformation</span> <!--{_class="fragment hc" data-fragment-index="4"}-->
-  <span>*f( g(x) ) = g'( f(x) )*</span> <!--{_class="fragment vhc" data-fragment-index="4"}-->
-
-* <span>Verification</span> <!--{_class="fragment hc" data-fragment-index="5"}-->
-  <span>*P( f(x) ) is true*</span> <!--{_class="fragment vhc" data-fragment-index="5"}-->
-
-* <span>Oracle</span> <!--{_class="fragment hc" data-fragment-index="6"}-->
-  <span>*f(x) = g(x)*</span> <!--{_class="fragment vhc" data-fragment-index="6"}-->
-
-<!--{_class="sb"}-->
-
-$$$NOTES
-
-Verification example: Sorted list.
-
-An oracle assumes a known-correct implementation to test against.
-
-$$$
-
 ### Idempotence
+
+*f( f(x) ) = f(x)*
 
 ```python
 from hypothesis import given, strategies as st
@@ -700,14 +672,18 @@ def test_round_idempotent(number, decimals):
     assert rounded == round(rounded, decimals)
 
 ```
+<!--{_class="fragment" data-fragment-index="1"}-->
 
 It's already been done.
+<!--{_class="fragment" data-fragment-index="1"}-->
 
 $$$NOTES
 
 $$$
 
 ### Round trip
+
+*f<sup> -1</sup>( f(x) ) = x*
 
 ```python
 from hypothesis import given, strategies as st
@@ -730,8 +706,10 @@ def test_json_round_trip(data):
     assert data == myjson.loads(myjson.dumps(data))
 
 ```
+<!--{_class="fragment" data-fragment-index="1"}-->
 
 There and back again.
+<!--{_class="fragment" data-fragment-index="1"}-->
 
 $$$NOTES
 
@@ -740,6 +718,8 @@ Beware serialization differences.
 $$$
 
 ### Invariance
+
+*g( f(x) ) = g(x)*
 
 ```python
 from hypothesis import given, strategies as st
@@ -756,14 +736,18 @@ def test_something_invariant(rand, items):
     assert orig_items == []
 
 ```
+<!--{_class="fragment" data-fragment-index="1"}-->
 
 Some things never change.
+<!--{_class="fragment" data-fragment-index="1"}-->
 
 $$$NOTES
 
 $$$
 
 ### Transformation
+
+*f( g(x) ) = g'( f(x) )*
 
 ```python
 from string import ascii_uppercase as uc, ascii_lowercase as lc, digits
@@ -781,14 +765,18 @@ def test_uppercase_transformation(upperlower, text):
     assert text.upper() + upper == (text + lower).upper()
 
 ```
+<!--{_class="fragment" data-fragment-index="1"}-->
 
 All roads lead to Rome.
+<!--{_class="fragment" data-fragment-index="1"}-->
 
 $$$NOTES
 
 $$$
 
 ### Verification
+
+*P( f(x) ) is true*
 
 ```python
 from hypothesis import given, strategies as st
@@ -801,8 +789,10 @@ def test_no_tabs_after_expandtabs(text):
     assert "\t" not in text.expandtabs()
 
 ```
+<!--{_class="fragment" data-fragment-index="1"}-->
 
 (e) None of the above.
+<!--{_class="fragment" data-fragment-index="1"}-->
 
 $$$NOTES
 
@@ -811,6 +801,8 @@ This is true after the operation is performed.
 $$$
 
 ### Oracle
+
+*f(x) = g(x)*
 
 ```python
 import json
@@ -831,12 +823,27 @@ def test_json_oracle(json_text):
     assert json.loads(json_text) == myjson.loads(json_text)
 
 ```
+<!--{_class="fragment" data-fragment-index="1"}-->
 
 No, not the database.
+<!--{_class="fragment" data-fragment-index="1"}-->
 
 $$$NOTES
 
 Useful with a simple model or naive implementation.
+
+
+$$$
+$$$
+
+## Part 5
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+### Stateful tests
 
 $$$
 
@@ -948,7 +955,7 @@ This guy is much better, but much more complex.
 
 $$$
 
-### Stateful tests
+### Priority queue stateful tests
 
 ```python
 from hypothesis import assume, strategies as st
@@ -984,7 +991,34 @@ $$$NOTES
 
 We define the state machine, Hypothesis exercises it.
 
-Show example.
+$$$
+
+### Failure report
+
+If we use `max` instead of `min` in the test, it fails:
+
+```pytestresult
+========================= test session starts ==========================
+failtest_pqueue_stateful.py F
+=============================== FAILURES ===============================
+______________________ TestPriorityQueue.runTest _______________________
+[Traceback elided]
+AssertionError: assert 0 == 1
+------------------------- Captured stdout call -------------------------
+Step #1: check_put(item=0)
+Step #2: check_put(item=1)
+Step #3: check_get()
+======================= 1 failed in 0.05 seconds =======================
+
+```
+
+We get a minimized<sup>*</sup> failing sequence of operations.
+
+<br/><sup>*</sup><small>but not necessarily minimal</small>
+
+$$$NOTES
+
+This kind of thing is really hard to minimize, but Hypothesis does pretty well.
 
 
 $$$

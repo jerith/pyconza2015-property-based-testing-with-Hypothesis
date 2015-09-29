@@ -1,0 +1,11 @@
+========================= test session starts ==========================
+failtest_pqueue_stateful.py F
+=============================== FAILURES ===============================
+______________________ TestPriorityQueue.runTest _______________________
+[Traceback elided]
+AssertionError: assert 0 == 1
+------------------------- Captured stdout call -------------------------
+Step #1: check_put(item=0)
+Step #2: check_put(item=1)
+Step #3: check_get()
+======================= 1 failed in 0.05 seconds =======================

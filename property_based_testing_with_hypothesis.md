@@ -35,7 +35,12 @@ $$$
 $$$
 $$$
 
-<!-- @include 4_writing_property_based_tests.part.md -->
+<!-- @include 4_writing_properties.part.md -->
+
+$$$
+$$$
+
+<!-- @include 5_stateful_tests.part.md -->
 
 $$$
 $$$
