@@ -25,12 +25,17 @@ $$$
 $$$
 $$$
 
-<!-- @include 2_generating_values.part.md -->
+<!-- @include 2_hypothesis_basics.part.md -->
 
 $$$
 $$$
 
-<!-- @include 3_writing_property_based_tests.part.md -->
+<!-- @include 3_generating_values.part.md -->
+
+$$$
+$$$
+
+<!-- @include 4_writing_property_based_tests.part.md -->
 
 $$$
 $$$

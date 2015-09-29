@@ -1,0 +1,6 @@
+>>> st.integers(0, 10).map(lambda x: 2 ** x).example()
+1
+>>> st.integers(0, 10).map(lambda x: 2 ** x).example()
+512
+>>> st.integers(0, 10).map(lambda x: 2 ** x).example()
+8

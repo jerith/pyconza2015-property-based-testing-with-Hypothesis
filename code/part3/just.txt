@@ -1,0 +1,2 @@
+>>> st.just("I'm so lonely.").example()
+"I'm so lonely."

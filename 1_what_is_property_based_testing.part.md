@@ -47,15 +47,15 @@ $$$
 
 ### Issues with example-based tests
 
-* Tedious to write. <!--@exec frag()-->
+* Tedious to write. <!--@exec frag("hc")-->
 
-* Lots of repetitition. <!--@exec frag()-->
+* Lots of repetitition. <!--@exec frag("hc")-->
 
-* Painful to maintain. <!--@exec frag()-->
+* Painful to maintain. <!--@exec frag("hc")-->
 
-* Focus on low-level details. <!--@exec frag()-->
+* Focus on low-level details. <!--@exec frag("hc")-->
 
-* ... But infinitely better than no tests at all. <!--@exec frag()-->
+... But infinitely better than no tests at all. <!--@exec frag()-->
 
 $$$NOTES
 
@@ -100,29 +100,27 @@ $$$NOTES
 
 We have some methods that test correctness *in general*.
 
-Not complete, though. Doesn't test `add()`.
-
 We're only specifying the kind of input, not specific values.
 
 $$$
 
 ### How property-based tests work
 
-* Properties are assertions about invariants. <!--@exec frag()-->
+* Properties are assertions about invariants. <!--@exec frag("hc")-->
 
-* Lots of checks with randomly generated input. <!--@exec frag()-->
+* Lots of checks with randomly generated input. <!--@exec frag("hc")-->
 
-* Failure case minimisation. <!--@exec frag()-->
+* Failure case minimization. <!--@exec frag("hc")-->
 
-* Focus on high-level behaviour. <!--@exec frag()-->
+* Focus on high-level behaviour. <!--@exec frag("hc")-->
 
-* ... But no silver bullet. <!--@exec frag()-->
+... But no silver bullet. <!--@exec frag()-->
 
 $$$NOTES
 
 You like non-deterministic tests, right?
 
-More on minimisation later.
+More on minimization later.
 
 Lots of checks means lots of time.
 
@@ -137,5 +135,3 @@ $$$
 $$$NOTES
 
 This is a real test case that actually runs.
-
-Not complete, though. Doesn't test `add()`.

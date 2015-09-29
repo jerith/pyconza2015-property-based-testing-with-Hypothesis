@@ -1,9 +1,9 @@
 ========================= test session starts ==========================
 failtest_additive_inverse_nan.py F
 =============================== FAILURES ===============================
-_____________________ test_additive_inverse_float ______________________
+________________________ test_additive_inverse _________________________
 [Traceback elided]
 AssertionError: assert nan == --nan
 ------------------------------ Hypothesis ------------------------------
-Falsifying example: test_additive_inverse_float(x=nan)
-======================= 1 failed in 0.03 seconds =======================
+Falsifying example: test_additive_inverse(x=nan)
+======================= 1 failed in 0.02 seconds =======================

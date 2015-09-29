@@ -4,11 +4,10 @@ pytest sad.
 """
 
 
-class VerifyCorrect(object):
+class CorrectnessDefinition(object):
     @classmethod
     def assert_correct(cls):
         pass
 
 
-number = None
 number_list = None

@@ -1,4 +1,4 @@
-## Part 3
+## Part 4
 
 <br/>
 <br/>
@@ -19,8 +19,7 @@ $$$
 
 * Not too expensive to check. <!--@exec frag("hc")-->
 
-Harder than writing example-based tests, but a lot more useful.
-<!--@exec frag()-->
+Harder than example-based tests, but a lot more useful. <!--@exec frag()-->
 
 $$$NOTES
 
@@ -63,7 +62,7 @@ $$$
 ### Idempotence
 
 ```python
-<!-- @include code/part3/test_prop_idempotent.py -->
+<!-- @include code/part4/test_prop_idempotent.py -->
 ```
 
 It's already been done.
@@ -75,7 +74,7 @@ $$$
 ### Round trip
 
 ```python
-<!-- @include code/part3/test_prop_round_trip.py -->
+<!-- @include code/part4/test_prop_round_trip.py -->
 ```
 
 There and back again.
@@ -89,7 +88,7 @@ $$$
 ### Invariance
 
 ```python
-<!-- @include code/part3/test_prop_invariant.py -->
+<!-- @include code/part4/test_prop_invariant.py -->
 ```
 
 Some things never change.
@@ -101,7 +100,7 @@ $$$
 ### Transformation
 
 ```python
-<!-- @include code/part3/test_prop_transformation.py -->
+<!-- @include code/part4/test_prop_transformation.py -->
 ```
 
 All roads lead to Rome.
@@ -113,7 +112,7 @@ $$$
 ### Verification
 
 ```python
-<!-- @include code/part3/test_prop_verification.py -->
+<!-- @include code/part4/test_prop_verification.py -->
 ```
 
 (e) None of the above.
@@ -127,7 +126,7 @@ $$$
 ### Oracle
 
 ```python
-<!-- @include code/part3/test_prop_oracle.py -->
+<!-- @include code/part4/test_prop_oracle.py -->
 ```
 
 No, not the database.
@@ -141,7 +140,7 @@ $$$
 ### Back to our priority queue
 
 ```python
-<!-- @include code/part3/naive_pqueue.py -->
+<!-- @include code/part4/naive_pqueue.py -->
 ```
 
 $$$NOTES
@@ -153,7 +152,7 @@ $$$
 ### Much better priority queue
 
 ```python
-<!-- @include code/part3/fast_pqueue.py -->
+<!-- @include code/part4/fast_pqueue.py -->
 ```
 
 $$$NOTES
@@ -165,10 +164,12 @@ $$$
 ### Stateful tests
 
 ```python
-<!-- @include code/part3/test_pqueue_stateful.py -->
+<!-- @include code/part4/test_pqueue_stateful.py -->
 ```
 <!--{_style="font-size:50%"}-->
 
 $$$NOTES
 
-This guy is much better, but much more complex.
+We define the state machine, Hypothesis exercises it.
+
+Show example.

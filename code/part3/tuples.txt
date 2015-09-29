@@ -1,0 +1,4 @@
+>>> st.tuples(st.integers(0, 10), st.booleans()).example()
+(2, True)
+>>> st.tuples(st.integers(0, 10), st.booleans()).example()
+(7, False)

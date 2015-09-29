@@ -1,0 +1,6 @@
+>>> pprint((st.text("abc", max_size=5) | st.none()).example())
+u'ccabc'
+>>> pprint((st.text("abc", max_size=5) | st.none()).example())
+None
+>>> pprint((st.text("abc", max_size=5) | st.none()).example())
+u''
