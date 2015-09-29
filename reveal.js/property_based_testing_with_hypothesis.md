@@ -179,52 +179,52 @@ This is the core of testing: Determining correctness.
 
 $$$
 
-### Maybe without the unicorns
+### Defining correctness
+
+Let's define "correctness" for a priority queue.
 
 ```python
-from sufficiently_advanced_technology import CorrectnessDefinition, number_list
-from naive_pqueue import NaivePriorityQueue
-
-class PriorityQueueCorrectnessDefinition(CorrectnessDefinition):
-
-    def get_items_in_priority_order(self, items=number_list):
-        """Priority: we always get the smallest item first."""
-        pq = NaivePriorityQueue()
-        [pq.put(item) for item in items]
-        current = pq.get()
-        while len(pq) > 0:
-            prior, current = current, pq.get()
-            assert prior <= current
-
-    def get_all_items(self, items=number_list):
-        """Queue: we always get every item exactly once."""
-        pq = NaivePriorityQueue()
-        [pq.put(item) for item in items]
-        while len(pq) > 0:
-            items.remove(pq.get())
-        assert len(items) == 0
-
-PriorityQueueCorrectnessDefinition.assert_correct()
+def items_are_returned_in_priority_order(pq, items):
+    """We always get the smallest item first."""
+    [pq.put(item) for item in items]
+    assert len(pq) == len(items)
+    current = pq.get()
+    while len(pq) > 0:
+        prior, current = current, pq.get()
+        assert prior <= current
 
 ```
+<!--{_class="fragment"}-->
+
+```python
+def all_items_are_returned_exactly_once(pq, items):
+    """We always get every item exactly once."""
+    [pq.put(item) for item in items]
+    assert len(pq) == len(items)
+    while len(pq) > 0:
+        items.remove(pq.get())
+    assert len(items) == 0
+
+```
+<!--{_class="fragment"}-->
 
 $$$NOTES
 
-We have some methods that test correctness *in general*.
+We have some functions that test correctness *in general*.
 
-We're only specifying the kind of input, not specific values.
+Taken together, they describe what it is to be a priority queue.
 
 $$$
 
 ### How property-based tests work
 
-* Properties are assertions about invariants. <!--{_class="fragment hc"}-->
+* Focus on high-level requirements. <!--{_class="fragment hc"}-->
 
-* Lots of checks with randomly generated input. <!--{_class="fragment hc"}-->
+* Properties define behaviour. <!--{_class="fragment hc"}-->
+
+* Randomly generated input. <!--{_class="fragment hc"}-->
 
 * Failure case minimization. <!--{_class="fragment hc"}-->
-
-* Focus on high-level behaviour. <!--{_class="fragment hc"}-->
 
 ... But no silver bullet. <!--{_class="fragment"}-->
 
@@ -244,30 +244,34 @@ $$$
 from hypothesis import given, strategies as st
 from naive_pqueue import NaivePriorityQueue
 
-@given(items=st.lists(st.integers()))
-def test_get_all_items(items):
-    """We get every item exactly once."""
-    pq = NaivePriorityQueue()
-    [pq.put(item) for item in items]
-    while len(pq) > 0:
-        items.remove(pq.get())
-    assert len(items) == 0
-
 @given(items=st.lists(st.integers(), min_size=1))
-def test_get_items_in_order(items):
-    """We get items in sorted order."""
+def test_items_are_returned_in_priority_order(items):
+    """We always get the smallest item first."""
     pq = NaivePriorityQueue()
     [pq.put(item) for item in items]
+    assert len(pq) == len(items)
     current = pq.get()
     while len(pq) > 0:
         prior, current = current, pq.get()
         assert prior <= current
+
+@given(items=st.lists(st.integers()))
+def test_all_items_are_returned_exactly_once(items):
+    """We always get every item exactly once."""
+    pq = NaivePriorityQueue()
+    [pq.put(item) for item in items]
+    assert len(pq) == len(items)
+    while len(pq) > 0:
+        items.remove(pq.get())
+    assert len(items) == 0
 
 ```
 
 $$$NOTES
 
 This is a real test case that actually runs.
+
+Doesn't say anything about order of operations.
 
 
 $$$

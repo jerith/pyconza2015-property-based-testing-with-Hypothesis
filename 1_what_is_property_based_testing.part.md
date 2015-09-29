@@ -90,29 +90,37 @@ This is the core of testing: Determining correctness.
 
 $$$
 
-### Maybe without the unicorns
+### Defining correctness
+
+Let's define "correctness" for a priority queue.
 
 ```python
-<!-- @include code/part1/test_pqueue_sufficiently_advanced.py -->
+<!-- @include code/part1/prop_priority.py -->
 ```
+<!--@exec frag()-->
+
+```python
+<!-- @include code/part1/prop_queue.py -->
+```
+<!--@exec frag()-->
 
 $$$NOTES
 
-We have some methods that test correctness *in general*.
+We have some functions that test correctness *in general*.
 
-We're only specifying the kind of input, not specific values.
+Taken together, they describe what it is to be a priority queue.
 
 $$$
 
 ### How property-based tests work
 
-* Properties are assertions about invariants. <!--@exec frag("hc")-->
+* Focus on high-level requirements. <!--@exec frag("hc")-->
 
-* Lots of checks with randomly generated input. <!--@exec frag("hc")-->
+* Properties define behaviour. <!--@exec frag("hc")-->
+
+* Randomly generated input. <!--@exec frag("hc")-->
 
 * Failure case minimization. <!--@exec frag("hc")-->
-
-* Focus on high-level behaviour. <!--@exec frag("hc")-->
 
 ... But no silver bullet. <!--@exec frag()-->
 
@@ -135,3 +143,5 @@ $$$
 $$$NOTES
 
 This is a real test case that actually runs.
+
+Doesn't say anything about order of operations.
