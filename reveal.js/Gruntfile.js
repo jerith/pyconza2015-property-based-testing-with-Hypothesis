@@ -161,7 +161,7 @@ module.exports = function(grunt) {
                 }
             },
             markdown: {
-                src: [ '../*.md', '!../*.part.md' ],
+                src: [ '../*.md', '!../*.part.md', '!../README.md' ],
                 flatten: true,
                 expand: true
             }
