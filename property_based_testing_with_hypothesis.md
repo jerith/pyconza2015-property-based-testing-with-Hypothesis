@@ -25,7 +25,7 @@ $$$
 $$$
 $$$
 
-<!-- @include 2_hypothesis.part.md -->
+<!-- @include 2_generating_values.part.md -->
 
 $$$
 $$$

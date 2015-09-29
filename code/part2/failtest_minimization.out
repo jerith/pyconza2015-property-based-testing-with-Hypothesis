@@ -7,4 +7,4 @@ AssertionError: assert 42 < 42
  +  where 42 = sum([42])
 ------------------------------ Hypothesis ------------------------------
 Falsifying example: test_sum_less_than_42(numbers=[42])
-======================= 1 failed in 0.05 seconds =======================
+======================= 1 failed in 0.06 seconds =======================

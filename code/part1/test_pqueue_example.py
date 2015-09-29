@@ -29,13 +29,15 @@ def test_put_small():
     """If we put a small item, it lands at the front."""
     pq = mkpq(["b", "c"])
     pq.put("a")
-    assert pq._items == ["a", "b", "c"]
+    # Note: The front of the queue is the end of the list.
+    assert pq._items == ["c", "b", "a"]
 
 def test_put_big():
     """If we put a big item, it lands at the back."""
     pq = mkpq(["a", "b"])
     pq.put("c")
-    assert pq._items == ["a", "b", "c"]
+    # Note: The front of the queue is the end of the list.
+    assert pq._items == ["c", "b", "a"]
 
 # And many more that I didn't write because I got bored and
 # wandered off to work on something more interesting or play

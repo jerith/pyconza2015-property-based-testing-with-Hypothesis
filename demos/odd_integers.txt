@@ -1,7 +1,0 @@
->>> odd_integers = integers().map(lambda x: x * 2 + 1)
->>> odd_integers.example()
-45
->>> odd_integers.example()
-690832349825714274807131201360674962691L
->>> odd_integers.example()
--841

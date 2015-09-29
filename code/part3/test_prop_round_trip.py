@@ -1,5 +1,5 @@
 from hypothesis import given, strategies as st
-import json
+import myjson
 
 def nest_data(st_values):
     return st.lists(st_values) | st.dictionaries(st.text(), st_values)
@@ -15,4 +15,4 @@ def test_json_round_trip(data):
 
     (This will fail for input that contains tuples, but we don't test that.)
     """
-    assert data == json.loads(json.dumps(data))
+    assert data == myjson.loads(myjson.dumps(data))

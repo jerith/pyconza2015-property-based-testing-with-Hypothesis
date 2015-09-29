@@ -52,11 +52,11 @@ class NaivePriorityQueue(object):
     def put(self, item):
         """Add an item to the collection."""
         self._items.append(item)
-        self._items.sort()
+        self._items.sort(reverse=True)
 
     def get(self):
         """Remove and return the smallest item."""
-        return self._items.pop(0)
+        return self._items.pop()
 
 ```
 
@@ -104,13 +104,15 @@ def test_put_small():
     """If we put a small item, it lands at the front."""
     pq = mkpq(["b", "c"])
     pq.put("a")
-    assert pq._items == ["a", "b", "c"]
+    # Note: The front of the queue is the end of the list.
+    assert pq._items == ["c", "b", "a"]
 
 def test_put_big():
     """If we put a big item, it lands at the back."""
     pq = mkpq(["a", "b"])
     pq.put("c")
-    assert pq._items == ["a", "b", "c"]
+    # Note: The front of the queue is the end of the list.
+    assert pq._items == ["c", "b", "a"]
 
 # And many more that I didn't write because I got bored and
 # wandered off to work on something more interesting or play
@@ -281,7 +283,7 @@ $$$
 <br/>
 <br/>
 
-### Hypothesis basics
+### Generating values
 
 $$$
 
@@ -298,49 +300,20 @@ A strategy is a set of rules:
 * It's composable. <!--{_class="fragment hc" data-fragment-index="3"}-->
   *(Building blocks for complex data.)* <!--{_class="fragment vhc" data-fragment-index="3"}-->
 
-
-Built-in strategies are very clever, so yours can be simple.
+Built-in strategies are very clever so yours can be simple.
 <!--{_class="fragment"}-->
 
 $$$NOTES
 
 Other tools call them generators.
 
-.example() generates a random example.
+Django models, too.
 
 $$$
 
-### Managing generated input <span style="opacity: 0.3">(1)</span>
+### Excluding values
 
-Additive inverse (integers)
-
-```python
-from hypothesis import given, strategies as st
-
-@given(st.integers())
-def test_additive_inverse_int(x):
-    """Double additive inverse has no effect."""
-    assert x == -(-x)
-
-```
-
-```pytestresult
-========================= test session starts ==========================
-test_additive_inverse_int.py .
-======================= 1 passed in 0.13 seconds =======================
-
-```
-<!--{_class="fragment"}-->
-
-$$$NOTES
-
-Very simple example, valid for all integers.
-
-$$$
-
-### Managing generated input <span style="opacity: 0.3">(2)</span>
-
-Additive inverse (floating point)
+Additive inverse
 
 ```python
 from hypothesis import given, strategies as st
@@ -354,7 +327,7 @@ def test_additive_inverse_float(x):
 
 ```pytestresult
 ========================= test session starts ==========================
-failtest_additive_inverse_float.py F
+failtest_additive_inverse_nan.py F
 =============================== FAILURES ===============================
 _____________________ test_additive_inverse_float ______________________
 [Traceback elided]
@@ -372,9 +345,9 @@ Fails because `NaN` is not equal to anything.
 
 $$$
 
-### Managing generated input <span style="opacity: 0.3">(3)</span>
+### Excluding values: assume
 
-Additive inverse (floating point) without NaN
+Additive inverse assuming no NaN
 
 ```python
 import math
@@ -390,11 +363,10 @@ def test_additive_inverse_float(x):
 
 ```pytestresult
 ========================= test session starts ==========================
-test_additive_inverse_float.py .
-======================= 1 passed in 0.07 seconds =======================
+test_additive_inverse_assume.py .
+======================= 1 passed in 0.06 seconds =======================
 
 ```
-<!--{_class="fragment"}-->
 
 $$$NOTES
 
@@ -402,7 +374,35 @@ $$$NOTES
 
 $$$
 
-### Managing generated input <span style="opacity: 0.3">(4)</span>
+### Excluding values: filter
+
+Additive inverse filtering NaN
+
+```python
+import math
+from hypothesis import given, strategies as st
+
+@given(st.floats().filter(lambda x: not math.isnan(x)))
+def test_additive_inverse_float(x):
+    """Double additive inverse has no effect."""
+    assert x == -(-x)
+
+```
+
+```pytestresult
+========================= test session starts ==========================
+test_additive_inverse_filter.py .
+======================= 1 passed in 0.06 seconds =======================
+
+```
+
+$$$NOTES
+
+`assume()` tells Hypothesis to ignore this example.
+
+$$$
+
+### Including values
 
 ```python
 from hypothesis import given, strategies as st
@@ -419,7 +419,7 @@ Note the potential division by zero.
 ```pytestresult
 ========================= test session starts ==========================
 test_weird_edge_case.py .
-======================= 1 passed in 0.06 seconds =======================
+======================= 1 passed in 0.07 seconds =======================
 
 ```
 <!--{_class="fragment"}-->
@@ -432,7 +432,7 @@ Built-in strategies are cleverly weighted to include common edge cases.
 
 $$$
 
-### Managing generated input <span style="opacity: 0.3">(5)</span>
+### Including values: @example
 
 ```python
 from hypothesis import given, example, strategies as st
@@ -459,86 +459,37 @@ Falsifying example: test_weird_edge_case(x=1337)
 ======================= 1 failed in 0.01 seconds =======================
 
 ```
-<!--{_class="fragment"}-->
 
 $$$NOTES
 
-Random generation doesn't find everything.
-
-Built-in strategies are cleverly weighted to include common edge cases.
+Hypothesis tracks failing examples, but that doesn't work for CI.
 
 $$$
 
-### Strategies: combinations
+### Building strategies
 
-ints or floats or strings:
+* <span>Multiple strategies</span><!--{_class="fragment hc" data-fragment-index="1"}-->
+  <span>`st.text()|st.none()`</span><!--{_class="fragment" data-fragment-index="1"}-->
 
-```python
->>> ints_or_floats_or_strings = integers() | floats() | text("1234567890")
->>> ints_or_floats_or_strings.example()
-u'25439943'
->>> ints_or_floats_or_strings.example()
--654234146027241025880061147001483025751L
->>> ints_or_floats_or_strings.example()
--0.7821238706527601
->>> ints_or_floats_or_strings.example()
--3.032482863887629e+132
->>> ints_or_floats_or_strings.example()
-u'8666366964400506'
+* <span>Modifications</span><!--{_class="fragment hc" data-fragment-index="2"}-->
+  <span>`.map()` and `.filter()`</span><!--{_class="fragment" data-fragment-index="2"}-->
 
-```
+* <span>New things</span><!--{_class="fragment hc" data-fragment-index="3"}-->
+  <span>`.flatmap()` and `recursive()`</span><!--{_class="fragment" data-fragment-index="3"}-->
 
-Beware: `text()|none()` ⇒ half strings, half `None`.
+* <span>Build from scratch</span><!--{_class="fragment hc" data-fragment-index="4"}-->
 
-<!--{_class="fragment" data-fragment-index="1"}-->
+<!--{_class="sb"}-->
 
 $$$NOTES
 
-Sometimes you want to choose from multiple strategies.
+Half strings, half `None`.
+
+See docs for details.
 
 $$$
 
-### Strategies: filter and map
-
-Lists with even lengths:
-
-```python
->>> even_lists = lists(integers(0, 100)).filter(lambda l: len(l) % 2 == 0)
->>> even_lists.example()
-[52, 42]
->>> even_lists.example()
-[71, 34, 79, 50, 80, 56, 64, 34]
->>> even_lists.example()
-[]
-
-```
-
-Odd integers:
-<!--{_class="fragment" data-fragment-index="1"}-->
-
-```python
->>> odd_integers = integers().map(lambda x: x * 2 + 1)
->>> odd_integers.example()
-45
->>> odd_integers.example()
-690832349825714274807131201360674962691L
->>> odd_integers.example()
--841
-
-```
-<!--{_class="fragment" data-fragment-index="1"}-->
-
-$$$NOTES
-
-Filter predicates mustn't be too hard to satisfy.
-
-Use map instead of filter where possible.
-
-$$$
-
-### Strategies: flatmap
-
-Square text:
+### flatmap: square text
 
 ```python
 from hypothesis.strategies import integers, text, lists
@@ -573,31 +524,32 @@ You probably won't use this much.
 
 $$$
 
-### Strategies: recursive
-
-Nested dicts:
+### recursive: nested dicts
 
 ```python
->>> nest_dict = lambda vs: dictionaries(text("abc", max_size=5), vs)
->>> nested_dicts = recursive(integers(0, 100) | none(), nest_dict)
->>> pprint(nested_dicts.example())
-None
->>> pprint(nested_dicts.example())
-{u'a': None, u'b': 49}
->>> pprint(nested_dicts.example())
-28
+from hypothesis.strategies import text, none, dictionaries, recursive
+
+def nest_dict(values):
+    return dictionaries(text("abc", max_size=5), values)
+
+nested_dicts = recursive(text("def", max_size=5) | none(), nest_dict)
+
+```
+
+```python
 >>> pprint(nested_dicts.example())
 {}
 >>> pprint(nested_dicts.example())
 {u'': None,
- u'a': {},
- u'aa': {u'': 84,
-         u'b': 13,
-         u'bbb': 1,
-         u'cbbcc': 84},
- u'b': 0}
+ u'c': {},
+ u'cc': None,
+ u'ccccc': {u'b': {},
+            u'bbb': {u'': None, u'a': None},
+            u'cb': {u'': None, u'a': None, u'b': None}}}
 >>> pprint(nested_dicts.example())
-{u'': 54, u'c': 28, u'cc': 87, u'ccc': 35}
+{u'': {u'': None, u'a': None}, u'bbabb': {}}
+>>> pprint(nested_dicts.example())
+u'fd'
 
 ```
 
@@ -607,7 +559,7 @@ This stuff is in the docs.
 
 $$$
 
-### Minimization <span style="opacity: 0.3">(1)</span>
+### Minimization
 
 ```python
 from hypothesis import given, strategies as st
@@ -628,12 +580,12 @@ AssertionError: assert 42 < 42
  +  where 42 = sum([42])
 ------------------------------ Hypothesis ------------------------------
 Falsifying example: test_sum_less_than_42(numbers=[42])
-======================= 1 failed in 0.05 seconds =======================
+======================= 1 failed in 0.06 seconds =======================
 
 ```
 <!--{_class="fragment"}-->
 
-The falsifying example is the simplest failing input.
+The example is (usually) the simplest failing input.
 <!--{_class="fragment"}-->
 
 $$$NOTES
@@ -644,7 +596,7 @@ Minimization filters out the noise of random input.
 
 $$$
 
-### Minimization <span style="opacity: 0.3">(2)</span>
+### More minimization
 
 ```python
 from hypothesis import given, strategies as st
@@ -663,10 +615,10 @@ failtest_minimization_nontrivial.py F
 ___________________ test_sum_less_than_42_nontrivial ___________________
 [Traceback elided]
 AssertionError: assert 42 < 42
- +  where 42 = sum([0, 42, 0])
+ +  where 42 = sum([42, 0, 0])
 ------------------------------ Hypothesis ------------------------------
-Falsifying example: test_sum_less_than_42_nontrivial(numbers=[0, 42, 0])
-======================= 1 failed in 0.11 seconds =======================
+Falsifying example: test_sum_less_than_42_nontrivial(numbers=[42, 0, 0])
+======================= 1 failed in 0.10 seconds =======================
 
 ```
 
@@ -693,17 +645,16 @@ $$$
 
 ### What makes a good property?
 
-* True for (almost) all input.
+* True for (almost) all input. <!--{_class="fragment hc"}-->
 
-* Does not duplicate the code under test.
+* Does not duplicate the code under test. <!--{_class="fragment hc"}-->
 
-* Describes the code under test in a meaningful way.
+* Describes the code under test in a meaningful way. <!--{_class="fragment hc"}-->
 
-* Not too expensive to check.
+* Not too expensive to check. <!--{_class="fragment hc"}-->
 
 Harder than writing example-based tests, but a lot more useful.
 <!--{_class="fragment"}-->
-
 
 $$$NOTES
 
@@ -715,25 +666,25 @@ $$$
 
 ### Tips for defining properties
 
-* <span>Idempotence</span> <!--{_class="fragment hc hblock" data-fragment-index="1"}-->
-  <span>*f( f(x) ) = f(x)*</span> <!--{_class="fragment vhc hblock" data-fragment-index="1"}-->
+* <span>Idempotence</span> <!--{_class="fragment hc" data-fragment-index="1"}-->
+  <span>*f( f(x) ) = f(x)*</span> <!--{_class="fragment vhc" data-fragment-index="1"}-->
 
-* <span>Round trip</span> <!--{_class="fragment hc hblock" data-fragment-index="2"}-->
-  <span>*f<sup> -1</sup>( f(x) ) = x*</span> <!--{_class="fragment vhc hblock" data-fragment-index="2"}-->
+* <span>Round trip</span> <!--{_class="fragment hc" data-fragment-index="2"}-->
+  <span>*f<sup> -1</sup>( f(x) ) = x*</span> <!--{_class="fragment vhc" data-fragment-index="2"}-->
 
-* <span>Invariant</span> <!--{_class="fragment hc hblock" data-fragment-index="3"}-->
-  <span>*g( f(x) ) = g(x)*</span> <!--{_class="fragment vhc hblock" data-fragment-index="3"}-->
+* <span>Invariance</span> <!--{_class="fragment hc" data-fragment-index="3"}-->
+  <span>*g( f(x) ) = g(x)*</span> <!--{_class="fragment vhc" data-fragment-index="3"}-->
 
-* <span>Transformation</span> <!--{_class="fragment hc hblock" data-fragment-index="4"}-->
-  <span>*f( g(x) ) = g'( f(x) )*</span> <!--{_class="fragment vhc hblock" data-fragment-index="4"}-->
+* <span>Transformation</span> <!--{_class="fragment hc" data-fragment-index="4"}-->
+  <span>*f( g(x) ) = g'( f(x) )*</span> <!--{_class="fragment vhc" data-fragment-index="4"}-->
 
-* <span>Verification</span> <!--{_class="fragment hc hblock" data-fragment-index="5"}-->
-  <span>*P( f(x) ) is true*</span> <!--{_class="fragment vhc hblock" data-fragment-index="5"}-->
+* <span>Verification</span> <!--{_class="fragment hc" data-fragment-index="5"}-->
+  <span>*P( f(x) ) is true*</span> <!--{_class="fragment vhc" data-fragment-index="5"}-->
 
-* <span>Oracle</span> <!--{_class="fragment hc hblock" data-fragment-index="6"}-->
-  <span>*f(x) = g(x)*</span> <!--{_class="fragment vhc hblock" data-fragment-index="6"}-->
+* <span>Oracle</span> <!--{_class="fragment hc" data-fragment-index="6"}-->
+  <span>*f(x) = g(x)*</span> <!--{_class="fragment vhc" data-fragment-index="6"}-->
 
-<!--{_style="width: 16em"}-->
+<!--{_class="sb"}-->
 
 $$$NOTES
 
@@ -743,19 +694,10 @@ An oracle assumes a known-correct implementation to test against.
 
 $$$
 
-### Idempotent property
+### Idempotence
 
 ```python
 from hypothesis import given, strategies as st
-
-@given(st.text())
-def test_uppercase_idempotent(text):
-    """
-    .upper() only modifies text that is not already uppercase.
-    """
-    uppercase_text = text.upper()
-    assert uppercase_text == uppercase_text.upper()
-
 
 @given(number=st.floats(-1e300, 1e300), decimals=st.integers(0, 5))
 def test_round_idempotent(number, decimals):
@@ -767,17 +709,17 @@ def test_round_idempotent(number, decimals):
 
 ```
 
-$$$NOTES
+It's already been done.
 
-Pretty straightforward. Might be slow.
+$$$NOTES
 
 $$$
 
-### Round trip property
+### Round trip
 
 ```python
 from hypothesis import given, strategies as st
-import json
+import myjson
 
 def nest_data(st_values):
     return st.lists(st_values) | st.dictionaries(st.text(), st_values)
@@ -793,9 +735,11 @@ def test_json_round_trip(data):
 
     (This will fail for input that contains tuples, but we don't test that.)
     """
-    assert data == json.loads(json.dumps(data))
+    assert data == myjson.loads(myjson.dumps(data))
 
 ```
+
+There and back again.
 
 $$$NOTES
 
@@ -803,49 +747,56 @@ Beware serialization differences.
 
 $$$
 
-### Invariant property
+### Invariance
 
 ```python
 from hypothesis import given, strategies as st
-from random import shuffle
 
-@given(st.lists(st.integers()))
-def test_something_invariant(items):
+@given(st.randoms(), st.lists(st.integers()))
+def test_something_invariant(rand, items):
     """
     The set of items in a collection does not change when shuffling.
     """
     orig_items = list(items)
-    shuffle(items)
+    rand.shuffle(items)
     for item in items:
         orig_items.remove(item)
     assert orig_items == []
 
 ```
 
+Some things never change.
+
 $$$NOTES
 
 $$$
 
-### Transformation property
+### Transformation
 
 ```python
+from string import ascii_uppercase as uc, ascii_lowercase as lc, digits
 from hypothesis import given, strategies as st
 
-@given(st.text())
-def test_uppercase_transformation(text):
+st_upperlower = st.sampled_from(zip(uc + digits, lc + digits))
+
+@given(st_upperlower, st.text())
+def test_uppercase_transformation(upperlower, text):
     """
     Appending a lowercase character before uppercasing is equivalent to
     appending its uppercase equivalent after uppercasing.
     """
-    assert text.upper() + 'A' == (text + 'a').upper()
+    (upper, lower) = upperlower
+    assert text.upper() + upper == (text + lower).upper()
 
 ```
+
+All roads lead to Rome.
 
 $$$NOTES
 
 $$$
 
-### Verification property
+### Verification
 
 ```python
 from hypothesis import given, strategies as st
@@ -859,25 +810,41 @@ def test_no_tabs_after_expandtabs(text):
 
 ```
 
+(e) None of the above.
+
 $$$NOTES
+
+This is true after the operation is performed.
 
 $$$
 
-### Oracle property
+### Oracle
 
 ```python
+import json
 from hypothesis import given, strategies as st
+import myjson
 
-@given(st.text())
-def test_something_oracle(text):
+def nest_data(st_values):
+    return st.lists(st_values) | st.dictionaries(st.text(), st_values)
+
+def nested_data():
+    return st.none() | st.integers() | st.floats(-1e308, 1e308) | st.text()
+
+@given(st.recursive(nested_data(), nest_data).map(json.dumps))
+def test_json_oracle(json_text):
     """
     The new thing behaves the same as the old thing.
     """
-    assert True
+    assert json.loads(json_text) == myjson.loads(json_text)
 
 ```
 
+No, not the database.
+
 $$$NOTES
+
+Useful with a simple model or naive implementation.
 
 $$$
 
@@ -898,11 +865,11 @@ class NaivePriorityQueue(object):
     def put(self, item):
         """Add an item to the collection."""
         self._items.append(item)
-        self._items.sort()
+        self._items.sort(reverse=True)
 
     def get(self):
         """Remove and return the smallest item."""
-        return self._items.pop(0)
+        return self._items.pop()
 
 ```
 
@@ -927,35 +894,51 @@ class FastPriorityQueue(object):
         return len(self._heap)
 
     def put(self, item):
-        """Add an item to the collection."""
+        """
+        Add an item to the collection.
+        """
         self._heap.append(item)
         self._swim(len(self))
 
     def get(self):
-        """Remove and return the smallest item in the collection."""
+        """
+        Remove and return the smallest item in the collection.
+        """
         self._swap(1, len(self))
         item = self._heap.pop()
         self._sink(1)
         return item
 
     def _less(self, i, j):
-        """True if i_val and j_val exist and i_val < j_val, else False."""
+        """
+        True if i_val and j_val exist and i_val < j_val, else False.
+        """
         if max([i, j]) > len(self):
             return False
         return self._heap[i-1] < self._heap[j-1]
 
     def _swap(self, i, j):
-        """Swap i_val and j_val"""
+        """
+        Swap i_val and j_val.
+        """
         self._heap[i-1], self._heap[j-1] = self._heap[j-1], self._heap[i-1]
 
     def _swim(self, i):
-        """Move i_val up the heap until it's in a valid position."""
+        """
+        Move i_val up the heap until it's in a valid position.
+
+        While i_val is smaller than its parent, swap with the parent.
+        """
         while i > 1 and self._less(i, i/2):
             self._swap(i, i/2)
             i /= 2
 
     def _sink(self, i):
-        """Move i_val down the heap until it's in a valid position."""
+        """
+        Move i_val down the heap until it's in a valid position.
+
+        While i_val is larger than any children, swap with the largest child.
+        """
         while i < len(self):
             j = i*2
             if self._less(j+1, j):
@@ -973,7 +956,7 @@ This guy is much better, but much more complex.
 
 $$$
 
-### Stateful test
+### Stateful tests
 
 ```python
 from hypothesis import assume, strategies as st

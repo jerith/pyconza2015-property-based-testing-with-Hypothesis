@@ -130,13 +130,15 @@ module.exports = function(grunt) {
 			html: {
 				files: [ 'index.html', '*.md' ]
 			},
-            markdown: {
-                files: [ '../*.md', '../demos/*.txt', '../code/**/*.out' ],
+            sources: {
+                options: { livereload: false },
+                files: [ '../*.md', '../code/**/*.{out,txt}' ],
                 tasks: [ 'preprocess' ]
             },
             python: {
+                options: { livereload: false },
                 files: [ '../code/**/*.py' ],
-                tasks: [ 'preprocess', 'exec:pytest' ]
+                tasks: [ 'exec:pytest', 'preprocess' ]
             }
 		},
 
@@ -144,7 +146,6 @@ module.exports = function(grunt) {
             options: {
                 context: {
                     frag: function(classes, index) {
-                        // console.log("foo <|"+classes+"|><|"+index+"|>");
                         var output = '<!--{_class="fragment';
                         if (classes) {
                             output += ' ' + classes;
@@ -154,7 +155,6 @@ module.exports = function(grunt) {
                             output += ' data-fragment-index="' + index + '"';
                         }
                         output += '}-->';
-                        // console.log("bar <|"+output+"|>");
                         return output;
                     },
                     DEBUG: true
@@ -190,7 +190,8 @@ module.exports = function(grunt) {
 	grunt.registerTask( 'default', [ 'css', 'js', 'exec:pytest', 'preprocess' ] );
 
 	// JS task
-	grunt.registerTask( 'js', [ 'jshint', 'uglify', 'qunit' ] );
+	//grunt.registerTask( 'js', [ 'jshint', 'uglify', 'qunit' ] );
+	grunt.registerTask( 'js', [ 'jshint', 'uglify' ] );
 
 	// Theme CSS
 	grunt.registerTask( 'css-themes', [ 'sass:themes' ] );

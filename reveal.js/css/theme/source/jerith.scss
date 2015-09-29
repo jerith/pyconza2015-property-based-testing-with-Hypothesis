@@ -92,6 +92,16 @@ $headingMargin: -$blockMargin 0 $blockMargin*2 0;
   width: 49%;
 }
 
+.sb li p {
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+}
+
+.sb li p > span {
+  padding-right: 1em;
+}
+
 // Theme template ------------------------------
 @import "../template/theme";
 // ---------------------------------------------

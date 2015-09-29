@@ -11,17 +11,16 @@ $$$
 
 ### What makes a good property?
 
-* True for (almost) all input.
+* True for (almost) all input. <!--@exec frag("hc")-->
 
-* Does not duplicate the code under test.
+* Does not duplicate the code under test. <!--@exec frag("hc")-->
 
-* Describes the code under test in a meaningful way.
+* Describes the code under test in a meaningful way. <!--@exec frag("hc")-->
 
-* Not too expensive to check.
+* Not too expensive to check. <!--@exec frag("hc")-->
 
 Harder than writing example-based tests, but a lot more useful.
 <!--@exec frag()-->
-
 
 $$$NOTES
 
@@ -33,25 +32,25 @@ $$$
 
 ### Tips for defining properties
 
-* <span>Idempotence</span> <!--@exec frag("hc hblock", "1")-->
-  <span>*f( f(x) ) = f(x)*</span> <!--@exec frag("vhc hblock", "1")-->
+* <span>Idempotence</span> <!--@exec frag("hc", "1")-->
+  <span>*f( f(x) ) = f(x)*</span> <!--@exec frag("vhc", "1")-->
 
-* <span>Round trip</span> <!--@exec frag("hc hblock", "2")-->
-  <span>*f<sup> -1</sup>( f(x) ) = x*</span> <!--@exec frag("vhc hblock", "2")-->
+* <span>Round trip</span> <!--@exec frag("hc", "2")-->
+  <span>*f<sup> -1</sup>( f(x) ) = x*</span> <!--@exec frag("vhc", "2")-->
 
-* <span>Invariant</span> <!--@exec frag("hc hblock", "3")-->
-  <span>*g( f(x) ) = g(x)*</span> <!--@exec frag("vhc hblock", "3")-->
+* <span>Invariance</span> <!--@exec frag("hc", "3")-->
+  <span>*g( f(x) ) = g(x)*</span> <!--@exec frag("vhc", "3")-->
 
-* <span>Transformation</span> <!--@exec frag("hc hblock", "4")-->
-  <span>*f( g(x) ) = g'( f(x) )*</span> <!--@exec frag("vhc hblock", "4")-->
+* <span>Transformation</span> <!--@exec frag("hc", "4")-->
+  <span>*f( g(x) ) = g'( f(x) )*</span> <!--@exec frag("vhc", "4")-->
 
-* <span>Verification</span> <!--@exec frag("hc hblock", "5")-->
-  <span>*P( f(x) ) is true*</span> <!--@exec frag("vhc hblock", "5")-->
+* <span>Verification</span> <!--@exec frag("hc", "5")-->
+  <span>*P( f(x) ) is true*</span> <!--@exec frag("vhc", "5")-->
 
-* <span>Oracle</span> <!--@exec frag("hc hblock", "6")-->
-  <span>*f(x) = g(x)*</span> <!--@exec frag("vhc hblock", "6")-->
+* <span>Oracle</span> <!--@exec frag("hc", "6")-->
+  <span>*f(x) = g(x)*</span> <!--@exec frag("vhc", "6")-->
 
-<!--{_style="width: 16em"}-->
+<!--{_class="sb"}-->
 
 $$$NOTES
 
@@ -61,23 +60,25 @@ An oracle assumes a known-correct implementation to test against.
 
 $$$
 
-### Idempotent property
+### Idempotence
 
 ```python
 <!-- @include code/part3/test_prop_idempotent.py -->
 ```
 
-$$$NOTES
+It's already been done.
 
-Pretty straightforward. Might be slow.
+$$$NOTES
 
 $$$
 
-### Round trip property
+### Round trip
 
 ```python
 <!-- @include code/part3/test_prop_round_trip.py -->
 ```
+
+There and back again.
 
 $$$NOTES
 
@@ -85,43 +86,55 @@ Beware serialization differences.
 
 $$$
 
-### Invariant property
+### Invariance
 
 ```python
 <!-- @include code/part3/test_prop_invariant.py -->
 ```
 
+Some things never change.
+
 $$$NOTES
 
 $$$
 
-### Transformation property
+### Transformation
 
 ```python
 <!-- @include code/part3/test_prop_transformation.py -->
 ```
 
+All roads lead to Rome.
+
 $$$NOTES
 
 $$$
 
-### Verification property
+### Verification
 
 ```python
 <!-- @include code/part3/test_prop_verification.py -->
 ```
 
+(e) None of the above.
+
 $$$NOTES
+
+This is true after the operation is performed.
 
 $$$
 
-### Oracle property
+### Oracle
 
 ```python
 <!-- @include code/part3/test_prop_oracle.py -->
 ```
 
+No, not the database.
+
 $$$NOTES
+
+Useful with a simple model or naive implementation.
 
 $$$
 
@@ -149,7 +162,7 @@ This guy is much better, but much more complex.
 
 $$$
 
-### Stateful test
+### Stateful tests
 
 ```python
 <!-- @include code/part3/test_pqueue_stateful.py -->

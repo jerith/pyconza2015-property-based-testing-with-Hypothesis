@@ -1,5 +1,5 @@
 ========================= test session starts ==========================
-failtest_additive_inverse_float.py F
+failtest_additive_inverse_nan.py F
 =============================== FAILURES ===============================
 _____________________ test_additive_inverse_float ______________________
 [Traceback elided]

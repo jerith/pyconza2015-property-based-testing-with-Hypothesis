@@ -1,0 +1,13 @@
+>>> pprint(nested_dicts.example())
+{}
+>>> pprint(nested_dicts.example())
+{u'': None,
+ u'c': {},
+ u'cc': None,
+ u'ccccc': {u'b': {},
+            u'bbb': {u'': None, u'a': None},
+            u'cb': {u'': None, u'a': None, u'b': None}}}
+>>> pprint(nested_dicts.example())
+{u'': {u'': None, u'a': None}, u'bbabb': {}}
+>>> pprint(nested_dicts.example())
+u'fd'

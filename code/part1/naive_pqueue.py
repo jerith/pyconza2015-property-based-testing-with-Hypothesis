@@ -12,8 +12,8 @@ class NaivePriorityQueue(object):
     def put(self, item):
         """Add an item to the collection."""
         self._items.append(item)
-        self._items.sort()
+        self._items.sort(reverse=True)
 
     def get(self):
         """Remove and return the smallest item."""
-        return self._items.pop(0)
+        return self._items.pop()
