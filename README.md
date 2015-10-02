@@ -20,3 +20,10 @@ Assuming you're using virtualenvwrapper (and are in the `reveal.js` dir):
     mkvirtualenv myenv
     pip install -r ../code/requirements.txt
     PATH=$PATH:node_modules/.bin grunt serve
+
+### License
+
+When I get a few moments I'll add the necessary CC-by-4.0 boilerplate.
+
+reveal.js and some of the CSS I use (both of which are included in the repo)
+come from other people. I'll add the necessary license stuff for those too.
