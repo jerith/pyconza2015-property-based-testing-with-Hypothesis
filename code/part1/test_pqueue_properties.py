@@ -5,7 +5,8 @@ from naive_pqueue import NaivePriorityQueue
 def test_items_are_returned_in_priority_order(items):
     """We always get the smallest item first."""
     pq = NaivePriorityQueue()
-    [pq.put(item) for item in items]
+    for item in items:
+        pq.put(item)
     assert len(pq) == len(items)
     current = pq.get()
     while len(pq) > 0:
@@ -16,7 +17,8 @@ def test_items_are_returned_in_priority_order(items):
 def test_all_items_are_returned_exactly_once(items):
     """We always get every item exactly once."""
     pq = NaivePriorityQueue()
-    [pq.put(item) for item in items]
+    for item in items:
+        pq.put(item)
     assert len(pq) == len(items)
     while len(pq) > 0:
         items.remove(pq.get())

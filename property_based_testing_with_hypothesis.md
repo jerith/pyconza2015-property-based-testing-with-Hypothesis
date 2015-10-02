@@ -14,8 +14,7 @@ PyconZA 2015
 
 $$$NOTES
 
-I spend a lot of my time writing tests, and I'm not very good at it.
-(Measured by bugs that reach production.)
+Warning: Lots of code, you're not expected to remember any of it.
 
 $$$
 $$$
@@ -54,3 +53,7 @@ Now you get to ask me hard questions.
 <br/>
 
 (Or I can show some more code.)
+
+$$$NOTES
+
+Warning: Hypothesis will probably find bugs you didn't really want to find.

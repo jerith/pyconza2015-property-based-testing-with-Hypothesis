@@ -139,6 +139,7 @@ $$$
 ```python
 <!-- @include code/part1/test_pqueue_properties.py -->
 ```
+<!--{_style="font-size:55%"}-->
 
 $$$NOTES
 

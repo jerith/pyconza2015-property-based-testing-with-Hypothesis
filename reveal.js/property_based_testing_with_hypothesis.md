@@ -14,8 +14,7 @@ PyconZA 2015
 
 $$$NOTES
 
-I spend a lot of my time writing tests, and I'm not very good at it.
-(Measured by bugs that reach production.)
+Warning: Lots of code, you're not expected to remember any of it.
 
 $$$
 $$$
@@ -186,7 +185,8 @@ Let's define "correctness" for a priority queue.
 ```python
 def items_are_returned_in_priority_order(pq, items):
     """We always get the smallest item first."""
-    [pq.put(item) for item in items]
+    for item in items:
+        pq.put(item)
     assert len(pq) == len(items)
     current = pq.get()
     while len(pq) > 0:
@@ -199,7 +199,8 @@ def items_are_returned_in_priority_order(pq, items):
 ```python
 def all_items_are_returned_exactly_once(pq, items):
     """We always get every item exactly once."""
-    [pq.put(item) for item in items]
+    for item in items:
+        pq.put(item)
     assert len(pq) == len(items)
     while len(pq) > 0:
         items.remove(pq.get())
@@ -248,7 +249,8 @@ from naive_pqueue import NaivePriorityQueue
 def test_items_are_returned_in_priority_order(items):
     """We always get the smallest item first."""
     pq = NaivePriorityQueue()
-    [pq.put(item) for item in items]
+    for item in items:
+        pq.put(item)
     assert len(pq) == len(items)
     current = pq.get()
     while len(pq) > 0:
@@ -259,13 +261,15 @@ def test_items_are_returned_in_priority_order(items):
 def test_all_items_are_returned_exactly_once(items):
     """We always get every item exactly once."""
     pq = NaivePriorityQueue()
-    [pq.put(item) for item in items]
+    for item in items:
+        pq.put(item)
     assert len(pq) == len(items)
     while len(pq) > 0:
         items.remove(pq.get())
     assert len(items) == 0
 
 ```
+<!--{_style="font-size:55%"}-->
 
 $$$NOTES
 
@@ -1033,3 +1037,7 @@ Now you get to ask me hard questions.
 <br/>
 
 (Or I can show some more code.)
+
+$$$NOTES
+
+Warning: Hypothesis will probably find bugs you didn't really want to find.
