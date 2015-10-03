@@ -7,7 +7,9 @@ The generated slides can be found at
 http://jerith.github.io/pyconza2015-property-based-testing-with-Hypothesis
 (hit `s` to open a speaker-mode window and see notes and such).
 
-I'll put a link to the talk video here when it's available.
+There's a video at
+http://www.pyvideo.org/video/3934/property-based-testing-with-hypothesis as
+well.
 
 ### How to make it run
 
