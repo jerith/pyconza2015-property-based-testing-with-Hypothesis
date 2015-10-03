@@ -3,8 +3,11 @@
 This is the source for my
 [PyConZA 2015 talk](https://2015.za.pycon.org/talks/8/) of the same name.
 
-I'll put a link to the generated slides and talk video when they're up on the
-interwebs.
+The generated slides can be found at
+http://jerith.github.io/pyconza2015-property-based-testing-with-Hypothesis
+(hit `s` to open a speaker-mode window and see notes and such).
+
+I'll put a link to the talk video here when it's available.
 
 ### How to make it run
 
