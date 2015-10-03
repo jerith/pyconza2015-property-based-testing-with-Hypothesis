@@ -1,6 +1,14 @@
-## Property-based Testing With Hypothesis
+## Property-based testing with Hypothesis
 
-To make this run, do the following:
+This is the source for my
+[PyConZA 2015 talk](https://2015.za.pycon.org/talks/8/) of the same name.
+
+I'll put a link to the generated slides and talk video when they're up on the
+interwebs.
+
+### How to make it run
+
+To make it run, do the following:
 
     cd reveal.js
     npm install
@@ -21,9 +29,22 @@ Assuming you're using virtualenvwrapper (and are in the `reveal.js` dir):
     pip install -r ../code/requirements.txt
     PATH=$PATH:node_modules/.bin grunt serve
 
-### License
+### Licenses
 
-When I get a few moments I'll add the necessary CC-by-4.0 boilerplate.
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 
-reveal.js and some of the CSS I use (both of which are included in the repo)
-come from other people. I'll add the necessary license stuff for those too.
+The code examples in `code/` are in the public domain. (I doubt they're useful
+for anything other than this presentation, but feel free to do whatever you
+like with them.)
+
+[reveal.js][1] (which is almost everything in `reveal.js/`) is covered by its
+own MIT license (`reveal.js/LICENSE`) as are the minor modifications I made to
+it for this presentation.
+
+The [tomorrow-night syntax highlighting theme][2]
+(`reveal.js/css/highlight_tomorrow.css`) doesn't have a listed license, but
+[the theme upon which it is based][3] is covered by the MIT license.
+
+[1]: https://github.com/hakimel/reveal.js
+[2]: http://jmblog.github.io/color-themes-for-highlightjs/tomorrow-night/
+[3]: https://github.com/chriskempson/tomorrow-theme
